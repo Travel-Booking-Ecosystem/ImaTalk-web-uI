@@ -1,0 +1,62 @@
+
+.Conversation {
+    display: flex;
+    padding: 10px;
+    border-radius: 10px;
+    gap: 10px;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover {
+        background: rgb(243, 243, 243);
+    }
+
+    .avatar {
+        img {
+            height: 60px;
+            width: 60px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+    }
+
+    .conversation-info {
+        text-align: left;
+
+        .name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .message {
+            margin-top: 3px;
+            font-size: 0.8rem;
+            color: #666;
+            margin: 0;
+        }
+
+        .time {
+            margin-top: 5px;
+            font-size: 0.8rem;
+            color: #666;
+
+            // font-z
+        }
+    }
+}
+
+.active {
+    background: rgb(231, 231, 231);
+}
+
+.unread {
+    .conversation-info {
+
+        .message,
+        .time {
+            color: black;
+            font-weight: bold;
+        }
+    }
+}
