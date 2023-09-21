@@ -1,6 +1,10 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap');
 
+* {
+  /* transition: all 0.2s ease-in-out; */
+}
+
 
 body {
   margin: 0;

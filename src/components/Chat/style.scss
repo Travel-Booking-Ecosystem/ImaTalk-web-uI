@@ -34,7 +34,7 @@
         // background: red;
         flex: 1;
         overflow-y: auto;
-
+        background: rgba(242, 242, 242, 0.945);
         .message-container {
             display: flex;
             flex-direction: column;
@@ -70,6 +70,7 @@
                 border-radius: 5px;
                 border: none;
                 font-size: 1em;
+                font-family: 'Roboto Condensed', sans-serif;
 
                 &:focus {
                     outline: none;

@@ -1,0 +1,67 @@
+.UserInfo {
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    cursor: pointer;
+    border-bottom: 3px solid rgba(0, 0, 0, 0.297);
+
+
+    .user-avatar {
+        height: 75px;
+        width: 75px;
+        position: relative;
+
+        img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid rgb(0, 0, 0);
+        }
+
+        .online-status {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            right: 0px;
+            bottom: 0px;
+            border: 1.5px solid white;
+        }
+
+        .online {
+            background: rgb(1, 199, 1);
+        }
+
+        .away {
+            background: orange;
+        }
+
+        .offline {
+            background: grey;
+        }
+    }
+
+    .user-name {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0;
+        text-align: left;
+
+        p {
+            margin: 0;
+        }
+
+        .name {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .id {
+            font-size: 0.8rem;
+            color: #666;
+        }
+    }
+}

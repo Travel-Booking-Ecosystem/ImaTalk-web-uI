@@ -2,9 +2,9 @@ import "./style.scss";
 import React from "react";
 import ReplyIcon from "../../assests/images/reply.png"
 import ReplyMessageContext from "../../contexts/ReplyMessageContext";
-import MessageStatus from "../MessageStatus";
-import ReplyTo from "../ReplyTo";
-
+import MessageStatus from "../Message/MessageStatus";
+import ReplyTo from "../Message/ReplyTo";
+import { formatTime } from "../../utils/Utils";
 function findTimeDifferenceMessages(message1, message2) {
     // if message is last message, return 0
     if (message1 && message2) {
@@ -60,11 +60,8 @@ function getHideTimeStyle(message, nextMessage) {
 
 
     // check if the message is the last message
-    console.log("next message", nextMessage);
     const isLastMessage = !nextMessage;
     if (isLastMessage) {
-        console.log("last message");
-        console.log(message);
         return " "; // show time if it is the last message
     }
 
@@ -84,20 +81,10 @@ function getHideTimeStyle(message, nextMessage) {
 
 }
 
-function formatTime(time) {
-    // format the time to timezone 7 with format HH:mm
-    const date = new Date(time);
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    if (minutes < 10) {
-        return `${hours}:0${minutes}`;
-    }
-    return `${hours}:${minutes}`;
-}
 
 
 
-export default function ({ isMe, message, previousMessage, nextMessage }) {
+export default function ({ isMe, message, previousMessage, nextMessage, isSent, isSeen, seenAvatar }) {
 
     let style = ''
 
@@ -115,7 +102,6 @@ export default function ({ isMe, message, previousMessage, nextMessage }) {
         setRepliedMessage(message);
         inputBoxRef.current.focus();
     }
-
     return (
         <div className={`Message ${style}`} title={formattedTime}>
             <div className="avatar">
@@ -126,7 +112,7 @@ export default function ({ isMe, message, previousMessage, nextMessage }) {
                 <div className="message-text">{message.content}</div>
                 <div className="time-and-status">
                     <div className="time">{formattedTime}</div>
-                    {isLastMessage && <MessageStatus isMe={isMe} message={message} />}
+                    {<MessageStatus isMe={isMe} seenAvatar={seenAvatar} isSent={isSent} isSeen={isSeen} />}
             </div>
 
             </div>

@@ -1,0 +1,57 @@
+.TabContainer {
+    display: flex;
+    // background: red;
+    padding: 10px 0;
+    justify-content: center;
+    gap: 20%;
+
+    .tab {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+
+        &:hover {
+            i {
+                transform: scale(1.05);
+            }
+        }
+
+        .tab-name {
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .tab-icon {
+            font-size: 1.2rem;
+            position: relative;
+
+            .noti-red-dot {
+                position: absolute;
+                background: red;
+                color: white;
+                font-family: 'Roboto Condensed', sans-serif;
+                font-size: 0.7em;
+                text-align: center;
+                width: 20px;
+                line-height: 20px;
+                height: 20px;
+                border-radius: 50%;
+                font-weight: bold;
+                top: -125%;
+                right: -70%;
+                background: red;
+            }
+        }
+    }
+
+    .active-tab {
+        .tab-name,
+        i {
+            color: #0095f6;
+        }
+    }
+}

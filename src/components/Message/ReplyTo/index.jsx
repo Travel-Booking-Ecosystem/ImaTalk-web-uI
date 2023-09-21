@@ -1,4 +1,4 @@
-import { truncateString } from "../../utils/Utils";
+import { truncateString } from "../../../utils/Utils";
 import "./style.scss";
 import React from "react";
 
