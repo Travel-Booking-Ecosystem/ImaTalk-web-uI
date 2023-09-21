@@ -7,7 +7,7 @@ export default function ({ index, avatar, name, message, time, unread }) {
 
     let  style = ""
     if (active) {
-        style += " active"
+        style += " active-conversation"
     }
     if (unread) {
         style += " unread"

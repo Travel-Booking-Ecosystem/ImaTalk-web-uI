@@ -1,0 +1,23 @@
+.ReplyTo{
+    margin-top:10px;
+    background: #e7e6e6;
+    padding: 7px 10px;
+    border-radius: 5px;
+    border-left: 3px solid black;
+    max-width: 250px;
+    p {
+        margin: 0;
+    }
+
+    .sender-name {
+        font-weight: 500;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+
+    .replied-message-content {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+}

@@ -39,9 +39,9 @@
             display: flex;
             flex-direction: column;
             padding: 10px 20px;
-            gap: 5px;
+            // gap: 5px;
 
-          
+
         }
     }
 
@@ -51,6 +51,7 @@
         padding: 10px;
         // height: 40px;   
 
+
         .input-container {
             display: flex;
             justify-content: space-between;
@@ -59,6 +60,7 @@
             padding: 0px 30px;
             background: #e7e6e6bb;
             border-radius: 5px;
+
             input {
                 width: 100%;
                 box-sizing: border-box;
@@ -68,10 +70,12 @@
                 border-radius: 5px;
                 border: none;
                 font-size: 1em;
+
                 &:focus {
                     outline: none;
                 }
             }
+
             i {
                 cursor: pointer;
 
