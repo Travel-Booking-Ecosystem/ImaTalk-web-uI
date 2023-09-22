@@ -835,7 +835,7 @@ export const groupConversationListData = [
         },
     },
     {
-        id: 3,
+        id: 4,
         name: "Hải, Nam, Hiếu, ...",
         avatar: "https://images.unsplash.com/photo-1573074617613-fc8ef27eaa2f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8c3VwZXJjYXJ8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=600&q=60",
         lastMessage: {
@@ -860,7 +860,7 @@ export const notifiationListData = [
     {
         id: 2,
         image: "https://images.unsplash.com/photo-1573074617613-fc8ef27eaa2f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8c3VwZXJjYXJ8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=600&q=60",
-        title: quangNam.name,
+        title: "Hải, Hiếu, Nam, ...",
         content: "Tagged you in a message: Mai đi chơi không?",
         time: "2023-08-20T16:20:10",
         unread: true

@@ -23,7 +23,7 @@ export default function ({ active, name, avatar, onlineStatus, lastMessage, hand
         style += " active-conversation"
     }
     if (unread) {
-        style += " unread"
+        style += " .unread-conversation"
     }
 
 
