@@ -2,21 +2,17 @@ import Conversation from "./GroupConversationList/GroupConversation";
 import "./style.scss";
 import React, { useContext } from "react";
 import DirectConversationContext from "../../contexts/DirectConversationContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import UserAvatar from "./UserInfo";
 import SearchBar from "./SearchBar";
 import TabContainer from "./TabContainer";
 import DirectConversationList from "./DirectConversationList";
 import GroupConversationList from "./GroupConversationList";
 import NotificationList from "./NotificationList";
+import  UserContext  from "../../contexts/UserContext";
 export default function () {
 
-    const minamino = {
-        id: 1,
-        name: "Minamino",
-        userCode: "minamino21412",
-        avatar: "https://th.bing.com/th/id/OIP.ZpNOsfN4Tzl8UMtCe7j2kwHaE8?pid=ImgDet&w=192&h=128&c=7&dpr=1.3"
-    }
+  
     const {
         directConversationList,
         groupConversationList,
@@ -26,7 +22,7 @@ export default function () {
     } = useContext(DirectConversationContext)
 
 
-    const [activeTab, setActiveTab] = useState("notification-tab");
+    const [activeTab, setActiveTab] = useState("chat-tab");
 
     function checkIfActiveTab(tabName) {
         return activeTab === tabName ? "active-tab" : "";
@@ -36,11 +32,15 @@ export default function () {
         setActiveTab(tabName);
     }
 
-    const currentUser = minamino;
-    console.log("current conversation", currentConversation);
+    const { user } = useContext(UserContext);
+
+
+    // wait for user to be loaded
+    if (!user) return null;
+
     return (
         <div className="Sidebar">
-            <UserAvatar {...currentUser} />
+            <UserAvatar {...user} />
             <SearchBar />
             <TabContainer
                 handleClickTab={handleClickTab}
@@ -50,7 +50,7 @@ export default function () {
             {
                 activeTab === "chat-tab" ?
                     <DirectConversationList
-                        directConversationList={directConversationList}
+                        directConversationList={user.directConversationList}
                         handleClickConversation={handleClickConversation}
                         currentDirectConversation={currentConversation}
                     />

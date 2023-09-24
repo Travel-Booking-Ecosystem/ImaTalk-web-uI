@@ -1,7 +1,7 @@
 import "./style.scss";
 import React from "react";
 
-export default function ({ avatar, name, userCode }) {
+export default function ({ avatar, displayName, username }) {
 
     
     return (
@@ -11,8 +11,8 @@ export default function ({ avatar, name, userCode }) {
                 <div className="online-status online"></div>
             </div>
             <div className="user-name">
-                <p className="name">{name}</p>
-                <p className="id">@{userCode}</p>
+                <p className="name">{displayName}</p>
+                <p className="id">{username}</p>
             </div>
         </div>
     )

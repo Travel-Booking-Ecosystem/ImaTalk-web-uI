@@ -8,7 +8,7 @@ import { formatTime } from "../../utils/Utils";
 function findTimeDifferenceMessages(message1, message2) {
     // if message is last message, return 0
     if (message1 && message2) {
-        return timeDifferenceInMinutes(message1.time, message2.time)
+        return timeDifferenceInMinutes(message1.createdAt, message2.createdAt)
     }
 
     return 0;
@@ -20,12 +20,13 @@ function findTimeDifferenceMessages(message1, message2) {
 function timeDifferenceInMinutes(date1, date2) {
     const differenceInMilliseconds = Math.abs(new Date(date1) - new Date(date2));
     const differenceInMinutes = differenceInMilliseconds / (1000 * 60);
+
     return differenceInMinutes;
 }
 
 function checkIfSentBySameUser(message1, message2) {
     if (message1 && message2) {
-        return message1.user.id == message2.user.id;
+        return message1.senderId == message2.senderId
     }
     return false;
 }
@@ -84,7 +85,7 @@ function getHideTimeStyle(message, nextMessage) {
 
 
 
-export default function ({ isMe, message, previousMessage, nextMessage, isSent, isSeen, seenAvatar }) {
+export default function ({ isMe, message,sender, previousMessage, nextMessage, isSent, isSeen, seenAvatar }) {
 
     let style = ''
 
@@ -94,18 +95,20 @@ export default function ({ isMe, message, previousMessage, nextMessage, isSent, 
     style += getMarginTopStyle(message, previousMessage);
 
     const isLastMessage = !nextMessage;
-    const formattedTime = formatTime(message.time);
-    const { setRepliedMessage, inputBoxRef } = React.useContext(ReplyMessageContext);
+    const formattedTime = formatTime(message.createdAt);
+    const { setRepliedMessageId, inputBoxRef } = React.useContext(ReplyMessageContext);
 
 
     const handleReplyClick = () => {
-        setRepliedMessage(message);
+        
+        setRepliedMessageId(message.id);
         inputBoxRef.current.focus();
     }
+
     return (
         <div className={`Message ${style}`} title={formattedTime}>
             <div className="avatar">
-                <img src={message.user.avatar} alt="" />
+                <img src={sender.avatar} alt="" />
             </div>
             <div className="message-detail">
                 {message.replyTo && <ReplyTo repliedMessage={message.replyTo} />}

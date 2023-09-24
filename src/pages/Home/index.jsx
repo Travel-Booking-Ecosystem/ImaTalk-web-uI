@@ -4,15 +4,16 @@ import Sidebar from "../../components/Sidebar";
 import Chat from "../../components/Chat";
 import { directConversationListData, groupConversationListData, messages, notifiationListData } from '../../utils/data.js'
 import DirectConversationContext from '../../contexts/DirectConversationContext';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import axios from "axios";
+import UserContext from "../../contexts/UserContext";
 export default function () {
 
     const [directConversationList, setDirectConversationList] = useState();
     const [groupConversationList, setGroupConversationList] = useState();
     const [notificationList, setNotificationList] = useState();
     const [currentConversation, setCurrentConversation] = useState();
-
-
+    const { user, token } = useContext(UserContext);
 
     useEffect(() => {
 
@@ -20,18 +21,39 @@ export default function () {
         setGroupConversationList(groupConversationListData);
 
         setNotificationList(notifiationListData);
-        setCurrentConversation(messages[0]);
+        setCurrentConversation(null);
     }, [])
 
+    useEffect(() => {
+        if (user) {
+            fetchConversationById(user.directConversationList[0].id);
+        }
 
-    const fetchConversationById = (id) => {
+    }, [user])
+
+
+    const fetchConversationById = async (id) => {
         // the conversation data is stored in the messages array
-        return messages.find((conversation) => conversation.conversationId === id);
+        if (!token) return null;
+        const header = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+
+
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/chat/get-direct-conversation-messages?conversationId=${id}`, header)
+
+        const conversation = response.data.data;
+        setCurrentConversation(conversation);
     }
 
+
+
+
     const handleClickConversation = (id) => {
-        const conversation = fetchConversationById(id);
-        setCurrentConversation(conversation);
+        fetchConversationById(id);
+        // setCurrentConversation(conversation);
     }
     return (
         <DirectConversationContext.Provider

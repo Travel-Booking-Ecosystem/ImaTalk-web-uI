@@ -3,20 +3,20 @@ import "./style.scss";
 import React, {useContext} from "react";
 import DirectConversationContext from "../../../../contexts/DirectConversationContext";
 
-export default function ({ active, name, avatar, onlineStatus, lastMessage, handleClickConversation }) {
+export default function ({ active, name, avatar, lastMessage, handleClickConversation, lastUpdate }) {
 
 
-
+    const online = true;
     // const active = index === 0;
-
+    let onlineStatus = "";
     const unread = lastMessage.unread;
     const content = truncateString(lastMessage.content, 6);
-    const formattedTime = formatTime(lastMessage.time);
+    const formattedTime = formatTime(lastUpdate);
     
     let  style = ""
-
-    if (!onlineStatus) {
-        console.log("OFFFFFLINE");
+    if (online) {
+        onlineStatus = "online"
+    } else {
         onlineStatus = "offline"
     }
 

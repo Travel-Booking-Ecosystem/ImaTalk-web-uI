@@ -10,30 +10,11 @@ export default function ({ }) {
 
     return (
         <div className="RegisterPage">
-            <div className="image">
+            <div className="background-image">
                 <img src={BackgroundImage} alt="" />
             </div>
-            <div className="main">
-                {/* <div className="title">
-                    <div className="logo">
-                    </div>
-                    <div className="title-text">
-                        <ul>
-                            <li>Last name is optional</li>
-                            <li>Password has at least 8 characters</li>
-                            <li>Password has at least one character, one letter, one special character</li>
-                        </ul>
-
-                        <div className="username-input">
-                            <label className="label-text" for='email'>Username for you (edit if you want): </label>
-                            <input type="text" id="email" />
-                        </div>
-                    </div>
-
-
-                </div> */}
-
-                <div className="form">
+            <div className="content">
+                <div className="form-input-container">
                     <div className="logo">
                         <img src={Logo} alt="" />
                         <div className="form-text"> 
@@ -65,7 +46,6 @@ export default function ({ }) {
 
                     <div className="submit-btn">Register</div>
                     <p className="link-text">Already have an account?<Link to="/login" class='link'> Login</Link></p>
-
                 </div>
 
             </div>
