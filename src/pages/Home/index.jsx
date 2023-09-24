@@ -7,62 +7,78 @@ import DirectConversationContext from '../../contexts/DirectConversationContext'
 import { useEffect, useState, useContext } from 'react';
 import axios from "axios";
 import UserContext from "../../contexts/UserContext";
+import LoadingContext from "../../contexts/LoadingContext";
+
 export default function () {
 
     const [directConversationList, setDirectConversationList] = useState();
     const [groupConversationList, setGroupConversationList] = useState();
     const [notificationList, setNotificationList] = useState();
-    const [currentConversation, setCurrentConversation] = useState();
+    const [activeConversationInfo, setActiveConversationInfo] = useState(); // this is the active conversation info on the sidebar
+    const [activeConversationDetail, setActiveConversationDetail] = useState(); // this is the conversation detail (messages) shown on the chat box
     const { user, token } = useContext(UserContext);
-
+    const { setLoading } = useContext(LoadingContext);
     useEffect(() => {
 
         setDirectConversationList(directConversationListData);
         setGroupConversationList(groupConversationListData);
 
         setNotificationList(notifiationListData);
-        setCurrentConversation(null);
+        setActiveConversationInfo(null);
     }, [])
 
     useEffect(() => {
         if (user) {
-            fetchConversationById(user.directConversationList[0].id);
+            // set the first conversation as the active conversation
+            setActiveConversationInfo(user.directConversationList[0]);
         }
 
     }, [user])
 
 
-    const fetchConversationById = async (id) => {
+    useEffect(() => {
+        // when the active conversation info changes, fetch the conversation detail (messages) from the server  
+        fetchConversationDetailById(activeConversationInfo && activeConversationInfo.id);
+    }, [activeConversationInfo])
+
+    const fetchConversationDetailById = async (id) => {
         // the conversation data is stored in the messages array
+
         if (!token) return null;
+        // if the conversation is already active, do nothing
+        // if (id == activeConversationInfo?.id) return null;
+
         const header = {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         }
 
-
+        setLoading(true);
+        // setTimeout(() => {}, 3000)
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/chat/get-direct-conversation-messages?conversationId=${id}`, header)
-
+        setLoading(false);
         const conversation = response.data.data;
-        setCurrentConversation(conversation);
+        setActiveConversationDetail(conversation);
     }
 
 
 
 
     const handleClickConversation = (id) => {
-        fetchConversationById(id);
-        // setCurrentConversation(conversation);
+        
+        // set the active conversation info in the sidebar
+        setActiveConversationInfo(user.directConversationList.find(conversation => conversation.id === id));
+        // fetch the conversation detail (messages) of that conversation from the server
+        fetchConversationDetailById(id);
     }
     return (
         <DirectConversationContext.Provider
             value={{
                 directConversationList,
-                groupConversationList,
-                currentConversation,
-                notificationList,
-                setCurrentConversation,
+                activeConversationInfo,
+                activeConversationDetail,
+                setActiveConversationInfo,
                 handleClickConversation,
 
             }}>

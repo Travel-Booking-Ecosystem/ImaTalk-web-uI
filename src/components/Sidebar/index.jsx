@@ -14,11 +14,12 @@ export default function () {
 
   
     const {
-        directConversationList,
-        groupConversationList,
-        notificationList,
+        // directConversationList,
+        // groupConversationList,
+        // notificationList,
+        activeConversationInfo,
+        // activeConversationDetail,
         handleClickConversation,
-        currentConversation
     } = useContext(DirectConversationContext)
 
 
@@ -34,6 +35,7 @@ export default function () {
 
     const { user } = useContext(UserContext);
 
+    console.log("activeConversationInfo", activeConversationInfo);
 
     // wait for user to be loaded
     if (!user) return null;
@@ -52,17 +54,17 @@ export default function () {
                     <DirectConversationList
                         directConversationList={user.directConversationList}
                         handleClickConversation={handleClickConversation}
-                        currentDirectConversation={currentConversation}
+                        activeConversationInfo={activeConversationInfo}
                     />
-                : activeTab === "group-tab" ?
-                    <GroupConversationList
-                        groupConversationList={groupConversationList}
-                        handleClickConversation={handleClickConversation}
-                        currentGroupConversation={currentConversation}
-                    />
+                // : activeTab === "group-tab" ?
+                //     <GroupConversationList
+                //         groupConversationList={groupConversationList}
+                //         handleClickConversation={handleClickConversation}
+                //         currentGroupConversation={currentConversation}
+                //     />
 
-                : activeTab === "notification-tab" ?
-                    <NotificationList notificationList={notificationList} />
+                // : activeTab === "notification-tab" ?
+                //     <NotificationList notificationList={notificationList} />
                 : null
                 
 

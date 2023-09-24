@@ -11,7 +11,7 @@ import axios from "axios";
 export default function () {
     {/* TODO: if the time between messages is too small, they are displayed very closed to each other */ }
 
-    const { currentConversation, setCurrentConversation } = useContext(DirectConversationContext);
+    const { activeConversationDetail } = useContext(DirectConversationContext);
     const { user, token } = useContext(UserContext);
 
     // const user = user;
@@ -24,32 +24,13 @@ export default function () {
     const [repliedMessageId, setRepliedMessageId] = useState(null);
 
 
-    useEffect(() => {
-
-        if (user) {
-            // fetchConversationById(user.directConversationList[0].id);
-        }
-
-    })
-
-    // const fetchConversationById = async (id) => {
-    //     const header = {
-    //         headers: {
-    //             Authorization: `Bearer ${token}`
-    //         }
-    //     }
-    //     // const firstConversationId = user.directConversationList[0].id;
-    //     const response2 = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/chat/get-direct-conversation-messages?conversationId=${id}`, header)
-    //     const conversation = response2.data;
-    //     console.log("CONVERSATION", conversation);
-    //     setCurrentConversation(conversation);
-    // }
-
     // useEffect(() => {
-    //     if (currentConversation) {
-    //         setMessages(currentConversation.messages);
+
+    //     if (user) {
+    //         // fetchConversationById(user.directConversationList[0].id);
     //     }
-    // }, [currentConversation]); // This will trigger only once
+
+    // })
 
 
 
@@ -91,14 +72,14 @@ export default function () {
         }
     }
     // wait for user to be loaded
-    if (!user || !currentConversation) return null;
+    if (!user || !activeConversationDetail) return null;
 
 
-    let otherUser = Object.entries(currentConversation.members).filter(([id, member]) => id != user.id)[0][1];
-    const messageArray = Object.entries(currentConversation.messages).map(([messageId, message]) => message);
+    let otherUser = Object.entries(activeConversationDetail.members).filter(([id, member]) => id != user.id)[0][1];
+    const messageArray = Object.entries(activeConversationDetail.messages).map(([messageId, message]) => message);
     return (
         <ReplyMessageContext.Provider value={{ repliedMessageId, setRepliedMessageId, inputBoxRef }}>
-            {currentConversation && currentConversation.messages &&
+            {activeConversationDetail && activeConversationDetail.messages &&
 
                 <div className="chat">
                     <div className="chat-header">
@@ -122,7 +103,7 @@ export default function () {
                                             isSeen={false}
                                             isSent={false}
                                             previousMessage={index > 0 ? messageArray[index - 1] : null}
-                                            sender={currentConversation.members[message.senderId]}
+                                            sender={activeConversationDetail.members[message.senderId]}
                                             message={message}
                                             nextMessage={index < messageArray.length - 1 ? messageArray[index + 1] : null}
                                         />
@@ -137,14 +118,14 @@ export default function () {
                     </div>
                     <div className="chat-footer">
                         {repliedMessageId &&
-                        // <p>{currentConversation.members[currentConversation.messages[repliedMessageId].senderId].displayName}</p> 
-                        //TODO: :))
-                            <ReplyToInputFooter 
-                                
-                                    senderName={currentConversation.members[currentConversation.messages[repliedMessageId].senderId].displayName}
-                                messageContent={ currentConversation.messages[repliedMessageId].content}
-                        
-                         />
+                            // <p>{activeConversationDetail.members[activeConversationDetail.messages[repliedMessageId].senderId].displayName}</p> 
+                            //TODO: :))
+                            <ReplyToInputFooter
+
+                                senderName={activeConversationDetail.members[activeConversationDetail.messages[repliedMessageId].senderId].displayName}
+                                messageContent={activeConversationDetail.messages[repliedMessageId].content}
+
+                            />
                         }
                         <div className="input-container">
                             <input
