@@ -50,8 +50,9 @@ function App() {
       const userProfile = response.data.data;
       setUser(userProfile);
     } catch (e) {
+      //TODO: handle only when token is invalid or expired
       console.log("error", e);
-      // localStorage.removeItem('token');
+      localStorage.removeItem('token');
       setToken(null);
     }
 

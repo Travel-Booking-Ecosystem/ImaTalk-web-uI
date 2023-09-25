@@ -3,8 +3,8 @@ import "./style.scss";
 import React from "react";
 
 export default function ({ repliedMessage }) {
-
-    const truncatedUserName = truncateString(repliedMessage.user.name, 10);
+    if (!repliedMessage) return null;
+    const truncatedUserName = truncateString(repliedMessage.sender, 10);
     const truncatedMessage = truncateString(repliedMessage.content, 10);
     return (
         <div className="ReplyTo">

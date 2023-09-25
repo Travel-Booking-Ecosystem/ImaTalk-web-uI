@@ -85,7 +85,7 @@ function getHideTimeStyle(message, nextMessage) {
 
 
 
-export default function ({ isMe, message,sender, previousMessage, nextMessage, isSent, isSeen, seenAvatar }) {
+export default function ({ isMe, message,sender, previousMessage, nextMessage, isSent, isSeen, seenAvatar, repliedMessage }) {
 
     let style = ''
 
@@ -111,7 +111,7 @@ export default function ({ isMe, message,sender, previousMessage, nextMessage, i
                 <img src={sender.avatar} alt="" />
             </div>
             <div className="message-detail">
-                {message.replyTo && <ReplyTo repliedMessage={message.replyTo} />}
+                <ReplyTo repliedMessage={repliedMessage} />
                 <div className="message-text">{message.content}</div>
                 <div className="time-and-status">
                     <div className="time">{formattedTime}</div>
