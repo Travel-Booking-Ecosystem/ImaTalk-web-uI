@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  frontend:
+    image: hainguyen267/ima-talk-ui:0.1
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_BACKEND_URL=35.223.208.160:8080
+  backend:
+    image: hainguyen267/ima-talk:0.1
+    ports:
+      - "8080:8080"
+

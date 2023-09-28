@@ -33,8 +33,10 @@ export default function ({ }) {
     const handleLogin = async () => {
         if (!formData.email || !formData.password) return 
 
+        setLoading(true);
         const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/auth/login`, formData);
-    
+        setLoading(false);
+        
         if (response.data.status == 200) {
             const accessToken = response.data.data.accessToken;
             localStorage.setItem("token", accessToken);

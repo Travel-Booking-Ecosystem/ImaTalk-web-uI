@@ -6,11 +6,6 @@ export default function ({ directConversationList, handleClickConversation, acti
     return (
         <div className="DirectConversationList">
             {directConversationList && directConversationList.map((conversation, index) => {
-                // message, time, unread
-
-                // console.log("conversation", conversation);
-                // console.log("activeConversationInfo", activeConversationInfo);
-                // console.log("active =", activeConversationInfo && activeConversationInfo.id === conversation.id);
                 return (
                     <DirectConversation     
                         key={index}

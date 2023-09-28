@@ -35,7 +35,7 @@ export default function () {
 
     const { user } = useContext(UserContext);
 
-    console.log("activeConversationInfo", activeConversationInfo);
+    // console.log("activeConversationInfo", activeConversationInfo);
 
     // wait for user to be loaded
     if (!user) return null;

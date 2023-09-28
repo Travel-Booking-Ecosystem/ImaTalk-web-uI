@@ -85,7 +85,7 @@ function getHideTimeStyle(message, nextMessage) {
 
 
 
-export default function ({ isMe, message,sender, previousMessage, nextMessage, isSent, isSeen, seenAvatar, repliedMessage }) {
+    export default function ({ isMe, message,sender, previousMessage, nextMessage, isSent, isSeen, seenAvatar, repliedMessage }) {
 
     let style = ''
 
@@ -100,7 +100,7 @@ export default function ({ isMe, message,sender, previousMessage, nextMessage, i
 
 
     const handleReplyClick = () => {
-        
+        console.log('handleReplyClick');
         setRepliedMessageId(message.id);
         inputBoxRef.current.focus();
     }

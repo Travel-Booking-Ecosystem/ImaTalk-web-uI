@@ -1,6 +1,5 @@
 import "./style.scss";
-import React, { useState, useContext } from "react";
-import { useEffect, useRef } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import Message from "../Message";
 import ReplyMessageContext from "../../contexts/ReplyMessageContext";
 import ReplyTo from "../Message/ReplyTo";
@@ -11,32 +10,82 @@ import axios from "axios";
 import SockJS from 'sockjs-client';
 import { overWS } from 'stompjs'
 import { over } from 'stompjs';
-let stompClient = null
 
 export default function () {
     {/* TODO: if the time between messages is too small, they are displayed very closed to each other */ }
 
-    const { activeConversationDetail } = useContext(DirectConversationContext);
+    const { activeConversationInfo } = useContext(DirectConversationContext);
     const { user, token } = useContext(UserContext);
-
+    // const [stompJsClient.current, setStompJsClient.current] = useState(null);
+    const stompJsClient = useRef(null);
     // const user = user;
     //TODO: clean all the code (every component)
 
     const chatBodyRef = useRef(null);
     const inputBoxRef = useRef(null);
     const [userInput, setUserInput] = useState("");
-    const [messages, setMessages] = useState([])
+    const [currentConversation, setCurrentConversation] = useState({
+        conversationId: null,
+        conversationName: null,
+        conversationAvatar: null,
+        members: {}, // this is a map of users, key is the user id, value is the user object
+        messageMap: {}, // this is a map of messages, key is the message id, value is the message object (for easy access)
+        messageList: [], // this is the list of messages, used to display the messages in the chat box
+    });
+
     const [repliedMessageId, setRepliedMessageId] = useState(null);
 
+    useEffect(() => {
+        connectWebSocket();
+        return () => {
+            closeWebSocketConnection();
+        }
+    }, [])
+
+    useEffect(() => {
+        if (activeConversationInfo) {
+            fetchConversationDetail(activeConversationInfo.id);
+        }
+    }, [activeConversationInfo])
+
+    const fetchConversationDetail = async () => {
+        const header = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+
+        const id = activeConversationInfo.id;
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/chat/get-direct-conversation-messages?conversationId=${id}`, header)
+        const data = response.data.data;
+
+        const conversation = {
+            conversationId: data.conversationId,
+            conversationName: data.conversationName,
+            conversationAvatar: data.conversationAvatar,
+            otherUsers: data.otherUsers,
+            members: data.members,
+            messageMap: data.messages, // the server returns a map of messages, key is the message id, value is the message object
+            messageList: Object.values(data.messages)
+        }
+
+        setCurrentConversation(conversation);
+
+    }
 
     const connectWebSocket = async () => {
-        let Sock = new SockJS(`http://localhost:8080/ws`);
-        stompClient = over(Sock);
-        await stompClient.connect({}, onConnected, onError);
-    }
+        // fix the bug he value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard '*' when the request's credentials mode is 'include'. The credentials mode of requests initiated by the XMLHttpRequest is controlled by the withCredentials attribut
+        let Sock = new SockJS(`${process.env.REACT_APP_BACKEND_URL}/ws`);
+        stompJsClient.current = over(Sock);
+        await stompJsClient.current.connect({}, onConnected, onError);
+
+    }   
+
+
     const onConnected = () => {
-        stompClient.subscribe('/topic/chat', onPrivateMessage);
-        console.log('Connected to websocket server!');
+        if (stompJsClient.current && stompJsClient.current.connected) {
+            stompJsClient.current.subscribe('/topic/chat', onReceivedMessage);
+        }
     }
 
     const onError = (err) => {
@@ -47,30 +96,30 @@ export default function () {
     // connectWebSocket();
 
     const closeWebSocketConnection = () => {
-        if (stompClient) {
-            stompClient.disconnect();
+        if (stompJsClient.current && stompJsClient.current.connected ) {
+            stompJsClient.current.disconnect();
         }
     }
 
-    const onPrivateMessage = (payload) => {
-        let payloadData = JSON.parse(payload.body);
+    const onReceivedMessage = (payload) => {
+        console.log("=====================ON RECEIVED MESSAGE============================");
+        let message = JSON.parse(payload.body);
+        console.log(message);
 
-        console.log(payloadData);
+        setCurrentConversation(prev => {
+            return {
+                ...prev,
+                messageMap: {...prev.messageMap, [message.id]: message},
+                messageList:  [...prev.messageList, message]
+            }
+        })
 
     }
 
     // Scroll to the bottom when the component mounts or when new messages arrive
     useEffect(() => {
         scrollToBottom();
-    }, [messages]); // This will trigger when messages change
-
-    useEffect(() => {
-        if (activeConversationDetail) {
-            const messageArray = Object.entries(activeConversationDetail.messages).map(([messageId, message]) => message);
-            setMessages(messageArray);
-
-        }
-    }, [activeConversationDetail])
+    }, [currentConversation.messageList]); // This will trigger when messages change
 
     // Function to scroll to the bottom of the chat body
     function scrollToBottom() {
@@ -83,30 +132,21 @@ export default function () {
         if (userInput.trim() == "") return;
 
         const newMessage = {
-            id: messages.length + 1,
-            senderId: user.id,
-            senderIsMe: true,
-            content: userInput,
-            createdAt: new Date().toISOString(),
-            status: "sent"
+            content: userInput
         }
 
         if (repliedMessageId) {
             newMessage.repliedMessageId = repliedMessageId
         }
 
-        const newMessageList = [...messages, newMessage];
 
-        setMessages(newMessageList);
         setUserInput("");
         // if user is replying to a message, clear the replied message
         if (repliedMessageId) {
             setRepliedMessageId(null);
 
         }
-        sendMessageToServer(newMessage);
-
-
+        sendMessageToServer(newMessage, currentConversation.conversationId);
     }
 
 
@@ -118,65 +158,81 @@ export default function () {
             }
         }
         const body = {
-            conversationId: activeConversationDetail.conversationId,
+            conversationId: currentConversation.conversationId,
             content: message.content,
             repliedMessageId: message.repliedMessageId
         }
-        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/chat/send-direct-message`, body, header)
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/chat/test`, body, header)
         const newMessage = response.data.data;
-        if (newMessage) {
-            console.log("newMessage", newMessage);
-        }
+
     }
 
 
 
-    // wait for user to be loaded
-    if (!user || !activeConversationDetail) return null;
+    // wait for data to be loaded
+    if (!user || !currentConversation) return null;
 
-
-    let otherUser = Object.entries(activeConversationDetail.members).filter(([id, member]) => id != user.id)[0][1];
     // clean the code, create a state for message array
-    function getRepliedMessageIfAny(message) {
-        if (!message.repliedMessageId) return null;
-        const repliedMessage = activeConversationDetail.messages[message.repliedMessageId];
-        // the replied message won't contain the sender's name, so we need to add it
-        const repliedMessageContent = repliedMessage.content;
-        const repliedMessageSender = activeConversationDetail.members[repliedMessage.senderId].displayName;
-
+    function getRepliedMessageIfAny(repliedMessageId) {
+        if (!repliedMessageId) return null;
+        const repliedMessage = getMessageById(repliedMessageId);
+        const repliedMessageSender = getMessageSender(repliedMessageId);
         return {
-            content: repliedMessageContent,
-            sender: repliedMessageSender
+            messageContent: repliedMessage.content,
+            senderName: repliedMessageSender.displayName
         }
     }
+
+    function getMessageSender(messageId) {
+        const repliedMessage = currentConversation.messageMap[messageId];
+        const senderId = repliedMessage.senderId;
+        return currentConversation.members[senderId];
+    }
+
+    function getPreviousMessage(index) {
+        if (index == 0) return null;
+        return currentConversation.messageList[index - 1];
+    }
+
+    function getNextMessage(index) {
+        if (index == currentConversation.messageList.length - 1) return null;
+        return currentConversation.messageList[index + 1];
+    }
+
+    function getMessageById(id) {
+        return currentConversation.messageMap[id];
+    }
+
+
 
     return (
         <ReplyMessageContext.Provider value={{ repliedMessageId, setRepliedMessageId, inputBoxRef }}>
-            {activeConversationDetail && activeConversationDetail.messages &&
+            {currentConversation &&
 
                 <div className="chat">
                     <div className="chat-header">
                         <div className="avatar">
-                            <img src={otherUser.avatar} alt="" />
+                            <img src={currentConversation.conversationAvatar} alt="" />
                         </div>
-                        <div className="name">{otherUser.displayName}</div>
+                        <div className="name">{currentConversation.conversationName}</div>
                     </div>
                     <div className="chat-body" ref={chatBodyRef}>
                         <div className="message-container">
                             {
-                                messages.map((message, index) => {
-
+                                currentConversation.messageList.map((message, index) => {
                                     const isMe = message.senderId == user.id;
-                                    const previousMessage = index > 0 ? messages[index - 1] : null;
-                                    const nextMessage = index < messages.length - 1 ? messages[index + 1] : null;
-                                    const sender = activeConversationDetail.members[message.senderId];
+                                    const previousMessage = getPreviousMessage(index)
+                                    const nextMessage = getNextMessage(index)
+                                    const sender = getMessageSender(message.id)
+                                    const repliedMessage = getRepliedMessageIfAny(message.repliedMessageId)
+
                                     return (
                                         <Message
                                             isMe={isMe}
-                                            repliedMessage={getRepliedMessageIfAny(message)}
-                                            seenAvatar={otherUser.avatar}
-                                            isSeen={false}
-                                            isSent={false}
+                                            repliedMessage={repliedMessage}
+                                            seenAvatar={null} // skip this for now
+                                            isSeen={false} // skip this for now
+                                            isSent={false} // skip this for
                                             previousMessage={previousMessage}
                                             sender={sender}
                                             message={message}
@@ -193,13 +249,7 @@ export default function () {
                     </div>
                     <div className="chat-footer">
                         {repliedMessageId &&
-                            // <p>{activeConversationDetail.members[activeConversationDetail.messages[repliedMessageId].senderId].displayName}</p> 
-                            //TODO: :))
-                            <ReplyToInputFooter
-
-                                senderName={activeConversationDetail.members[activeConversationDetail.messages[repliedMessageId].senderId].displayName}
-                                messageContent={activeConversationDetail.messages[repliedMessageId].content}
-
+                            <ReplyToInputFooter {...getRepliedMessageIfAny(repliedMessageId)}
                             />
                         }
                         <div className="input-container">

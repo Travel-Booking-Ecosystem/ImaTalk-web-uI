@@ -5,6 +5,7 @@ import ReplyMessageContext from "../../../contexts/ReplyMessageContext";
 import { truncateString } from "../../../utils/Utils";
 
 export default function ({ senderName, messageContent }) {
+
     const { setRepliedMessageId } = React.useContext(ReplyMessageContext);
     const truncatedUserName = truncateString(senderName, 10);
     const truncatedMessage = truncateString(messageContent, 20);
