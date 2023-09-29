@@ -62,14 +62,17 @@ function App() {
   return (
     <LoadingContext.Provider value={{ loading, setLoading }}>
       <UserContext.Provider value={{ user, setUser, token, setToken }}>
-        <Loading isLoading={loading} />
+                <Loading loading={loading} />
+
         <div className="App">
+
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
           </Routes>
         </div >
+
 
       </UserContext.Provider>
     </LoadingContext.Provider>

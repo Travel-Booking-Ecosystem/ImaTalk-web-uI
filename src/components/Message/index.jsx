@@ -5,6 +5,8 @@ import ReplyMessageContext from "../../contexts/ReplyMessageContext";
 import MessageStatus from "../Message/MessageStatus";
 import ReplyTo from "../Message/ReplyTo";
 import { formatTime } from "../../utils/Utils";
+
+
 function findTimeDifferenceMessages(message1, message2) {
     // if message is last message, return 0
     if (message1 && message2) {
@@ -85,7 +87,7 @@ function getHideTimeStyle(message, nextMessage) {
 
 
 
-    export default function ({ isMe, message,sender, previousMessage, nextMessage, isSent, isSeen, seenAvatar, repliedMessage }) {
+export default function ({ isMe, message, sender, previousMessage, nextMessage, isSent, isSeen, seenAvatar, repliedMessage }) {
 
     let style = ''
 
@@ -94,7 +96,6 @@ function getHideTimeStyle(message, nextMessage) {
     style += getHideTimeStyle(message, nextMessage);
     style += getMarginTopStyle(message, previousMessage);
 
-    const isLastMessage = !nextMessage;
     const formattedTime = formatTime(message.createdAt);
     const { setRepliedMessageId, inputBoxRef } = React.useContext(ReplyMessageContext);
 
@@ -116,7 +117,7 @@ function getHideTimeStyle(message, nextMessage) {
                 <div className="time-and-status">
                     <div className="time">{formattedTime}</div>
                     {<MessageStatus isMe={isMe} seenAvatar={seenAvatar} isSent={isSent} isSeen={isSeen} />}
-            </div>
+                </div>
 
             </div>
 

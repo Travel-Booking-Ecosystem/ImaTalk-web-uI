@@ -10,11 +10,13 @@ import axios from "axios";
 import SockJS from 'sockjs-client';
 import { overWS } from 'stompjs'
 import { over } from 'stompjs';
+import LoadingContext from "../../contexts/LoadingContext";
 
 export default function () {
     {/* TODO: if the time between messages is too small, they are displayed very closed to each other */ }
 
     const { activeConversationInfo } = useContext(DirectConversationContext);
+    const { setLoading } = useContext(LoadingContext)
     const { user, token } = useContext(UserContext);
     // const [stompJsClient.current, setStompJsClient.current] = useState(null);
     const stompJsClient = useRef(null);
@@ -40,7 +42,7 @@ export default function () {
         return () => {
             closeWebSocketConnection();
         }
-    }, [])
+    }, [currentConversation.conversationId])
 
     useEffect(() => {
         if (activeConversationInfo) {
@@ -56,7 +58,9 @@ export default function () {
         }
 
         const id = activeConversationInfo.id;
+        setLoading(true);
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/chat/get-direct-conversation-messages?conversationId=${id}`, header)
+        setLoading(false);
         const data = response.data.data;
 
         const conversation = {
@@ -74,6 +78,7 @@ export default function () {
     }
 
     const connectWebSocket = async () => {
+        console.log("Trying to connect to websocket");
         // fix the bug he value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard '*' when the request's credentials mode is 'include'. The credentials mode of requests initiated by the XMLHttpRequest is controlled by the withCredentials attribut
         let Sock = new SockJS(`${process.env.REACT_APP_BACKEND_URL}/ws`);
         stompJsClient.current = over(Sock);
@@ -83,8 +88,9 @@ export default function () {
 
 
     const onConnected = () => {
+        console.log("Connected to websocket");
         if (stompJsClient.current && stompJsClient.current.connected) {
-            stompJsClient.current.subscribe('/topic/chat', onReceivedMessage);
+            stompJsClient.current.subscribe(`/topic/chat/${currentConversation.conversationId}`, onReceivedMessage);
         }
     }
 
@@ -162,7 +168,9 @@ export default function () {
             content: message.content,
             repliedMessageId: message.repliedMessageId
         }
-        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/chat/test`, body, header)
+
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/chat/send-direct-message`, body, header)
+        // console.log();
         const newMessage = response.data.data;
 
     }
