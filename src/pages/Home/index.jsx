@@ -26,17 +26,18 @@ export default function () {
         setNotificationList(notifiationListData);
         setActiveConversationInfo(null);
     }, [])
-
     useEffect(() => {
         if (user) {
-            // set the first conversation as the active conversation
-            setActiveConversationInfo(user.directConversationList[0]);
+            // set the active conversation to be the current conversation that user was recently in
+            const currentConversation = user.directConversationList.find(c => c.id === user.currentConversationId)
+            setActiveConversationInfo(currentConversation);
         }
 
     }, [user])
 
 
     useEffect(() => {
+        console.log("active conversation info changed");
         // when the active conversation info changes, fetch the conversation detail (messages) from the server  
         fetchConversationDetailById(activeConversationInfo && activeConversationInfo.id);
     }, [activeConversationInfo])
@@ -65,7 +66,7 @@ export default function () {
 
 
 
-    const handleClickConversation = (id) => {
+    const setAndFetchActiveConversation = (id) => {
         
         // set the active conversation info in the sidebar
         setActiveConversationInfo(user.directConversationList.find(conversation => conversation.id === id));
@@ -79,7 +80,7 @@ export default function () {
                 activeConversationInfo,
                 activeConversationDetail,
                 setActiveConversationInfo,
-                handleClickConversation,
+                setAndFetchActiveConversation,
 
             }}>
             <div className="Home">

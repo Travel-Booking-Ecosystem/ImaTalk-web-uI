@@ -71,21 +71,27 @@
     }
 }
 
-.active-conversation {
-    background: rgb(220, 220, 220);
-    &:hover {
-        background: rgb(220, 220, 220);
-    }
-    
-}
-
 .unread-conversation {
     .conversation-info {
 
         .last-message-content,
         .time {
-            color: black;
-            font-weight: bold;
+            color: black; // highlight unread message
+            font-weight: bold;// highlight unread message
         }
     }
+}
+
+.active-conversation {
+    background: rgb(220, 220, 220);
+    &:hover {
+        background: rgb(220, 220, 220);
+    }
+
+    .last-message-content,
+    .time {
+        color: #666 !important; // there is no highlight for unread message for active conversation
+        font-weight: normal !important;// there is no highlight for unread message for active conversation
+    }
+    
 }

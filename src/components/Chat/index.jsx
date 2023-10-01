@@ -8,7 +8,6 @@ import DirectConversationContext from "../../contexts/DirectConversationContext"
 import UserContext from "../../contexts/UserContext";
 import axios from "axios";
 import SockJS from 'sockjs-client';
-import { overWS } from 'stompjs'
 import { over } from 'stompjs';
 import LoadingContext from "../../contexts/LoadingContext";
 
@@ -38,6 +37,7 @@ export default function () {
     const [repliedMessageId, setRepliedMessageId] = useState(null);
 
     useEffect(() => {
+        //TODO: please add comment for this
         connectWebSocket();
         return () => {
             closeWebSocketConnection();
