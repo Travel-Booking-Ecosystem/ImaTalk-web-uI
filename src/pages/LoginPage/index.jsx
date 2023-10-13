@@ -1,11 +1,13 @@
 import "./style.scss";
 import React, { useState, useEffect, useContext } from "react";
 import BackgroundImage from '../../assests/images/background1.png'
-import Logo from '../../assests/images/logo.svg'
+import Logo from '../../assests/images/dsy-logo.png'
 import { Link, useNavigate } from "react-router-dom";
 import UserContext from "../../contexts/UserContext";
 import LoadingContext from "../../contexts/LoadingContext";
 import axios from "axios";
+
+
 export default function ({ }) {
     const navigate = useNavigate();
     const { setLoading } = useContext(LoadingContext);
@@ -90,7 +92,13 @@ export default function ({ }) {
                             type={`${showPassword ? 'text' : 'password'}`}
                             id="password"
                             value={formData.password}
-                            onChange={handleChange} />
+                            onChange={handleChange} 
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    handleLogin();
+                                }
+                            }}
+                            />
 
                         <div className="show-password-btn" onClick={toggleShowPassword}>
                             {showPassword ? "Hide " : "Show "} password

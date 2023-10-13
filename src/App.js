@@ -3,7 +3,7 @@ import './App.css';
 import Home from './pages/Home';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import UserContext from './contexts/UserContext';
 import axios from 'axios';
 import Loading from './components/Loading';
@@ -45,14 +45,15 @@ function App() {
       }
 
       setLoading(true); // show loading spinner
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/chat/profile`, header);
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/profile`, header);
       setLoading(false) // hide loading spinner
+      console.log("response", response);
       const userProfile = response.data.data;
       setUser(userProfile);
     } catch (e) {
       //TODO: handle only when token is invalid or expired
       console.log("error", e);
-      // localStorage.removeItem('token');
+      localStorage.removeItem('token');
       setToken(null);
     }
 
@@ -62,7 +63,7 @@ function App() {
   return (
     <LoadingContext.Provider value={{ loading, setLoading }}>
       <UserContext.Provider value={{ user, setUser, token, setToken }}>
-                <Loading loading={loading} />
+        <Loading loading={loading} />
 
         <div className="App">
 
@@ -70,6 +71,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/logout" element={<Logout />} />
+
           </Routes>
         </div >
 
@@ -82,6 +85,22 @@ function App() {
 
 
   );
+}
+
+function Logout() {
+  const navigate = useNavigate();
+  const { setToken } = useContext(UserContext);
+  useEffect(() => {
+    localStorage.removeItem('token');
+    setToken(null);
+    navigate('/login');
+  }, [])
+
+  return (
+    <div>
+
+    </div>
+  )
 }
 
 export default App;

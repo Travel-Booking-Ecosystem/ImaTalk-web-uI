@@ -1,0 +1,48 @@
+.ModalContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .main {
+        min-width: 500px;
+        min-height: 300px;
+        background-color: white;
+        border-radius: 10px;
+
+
+        .heading {
+            display: flex;
+            justify-content: end;
+
+            .close-btn {
+                cursor: pointer;
+                font-size: 0.8rem;
+                // margin: 10px;
+                background: rgb(255, 181, 181);
+                color: white;
+                // border-radius: 50%;
+                padding: 10px;
+                border-top-right-radius: 10px;
+                &:hover {
+                    background: red;
+                }
+            }
+        }
+    }
+}

@@ -109,6 +109,7 @@ export default function ({ isMe, message, sender, previousMessage, nextMessage, 
     return (
         <div className={`Message ${style}`} title={formattedTime}>
             <div className="avatar">
+                <p className="display-name">{sender.displayName}</p>
                 <img src={sender.avatar} alt="" />
             </div>
             <div className="message-detail">

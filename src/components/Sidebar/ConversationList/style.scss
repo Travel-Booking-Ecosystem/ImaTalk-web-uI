@@ -33,7 +33,7 @@
         }
 
         .online {
-            background:rgb(1, 199, 1);
+            background: rgb(1, 199, 1);
         }
 
         .away {
@@ -77,13 +77,14 @@
         .last-message-content,
         .time {
             color: black; // highlight unread message
-            font-weight: bold;// highlight unread message
+            font-weight: bold; // highlight unread message
         }
     }
 }
 
 .active-conversation {
     background: rgb(220, 220, 220);
+
     &:hover {
         background: rgb(220, 220, 220);
     }
@@ -91,7 +92,73 @@
     .last-message-content,
     .time {
         color: #666 !important; // there is no highlight for unread message for active conversation
-        font-weight: normal !important;// there is no highlight for unread message for active conversation
+        font-weight: normal !important; // there is no highlight for unread message for active conversation
     }
-    
+
+}
+
+
+.Conversation-skeleton {
+
+    &:hover {
+        background: rgb(240, 240, 240);
+    }
+
+    .avatar {
+        img {
+            background: rgb(216, 216, 216);
+            border: 3px solid rgb(216, 216, 216);
+        }
+
+        .online-status {
+            border: 1.5px solid rgb(216, 216, 216);
+            background: rgb(216, 216, 216);
+            animation: skeleton-loading 1s linear infinite alternate;
+        }
+
+    }
+
+    .conversation-info {
+        text-align: left;
+        gap: 5px;
+
+
+        .name,
+        .last-message-content,
+        .time {
+            background: rgb(240, 240, 240);
+            width: 100px;
+            margin: 2px 0;
+            border-radius: 5px;
+            animation: skeleton-loading 1s linear infinite alternate;
+
+        }
+
+        .name {
+            width: 100px;
+            height: 20px;
+        }
+
+        .last-message-content {
+            width: 150px;
+            height: 15px;
+
+        }
+
+        .time {
+            width: 50px;
+            height: 10px;
+            // font-z
+        }
+    }
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-color: hsl(200, 20%, 80%);
+    }
+
+    100% {
+        background-color: hsl(0, 0%, 77%);
+    }
 }

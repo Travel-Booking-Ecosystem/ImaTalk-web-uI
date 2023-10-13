@@ -1,6 +1,7 @@
 
 // write a method to return only first 10 words from a string
 export const truncateString = (str, wordCount) => {
+    if (!str) return ""
     const words = str.split(" ");
 
     const truncatedWords = words.slice(0, wordCount).join(" ") + "...";

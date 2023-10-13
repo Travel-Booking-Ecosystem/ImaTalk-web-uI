@@ -4,128 +4,31 @@ import Message from "../Message";
 import ReplyMessageContext from "../../contexts/ReplyMessageContext";
 import ReplyTo from "../Message/ReplyTo";
 import ReplyToInputFooter from "./ReplyToInputFooter";
-import DirectConversationContext from "../../contexts/DirectConversationContext";
+import ConversationContext from "../../contexts/ConversationContext";
 import UserContext from "../../contexts/UserContext";
 import axios from "axios";
 import SockJS from 'sockjs-client';
 import { over } from 'stompjs';
 import LoadingContext from "../../contexts/LoadingContext";
+import data from '@emoji-mart/data'
+import Picker from '@emoji-mart/react'
 
 export default function () {
-    {/* TODO: if the time between messages is too small, they are displayed very closed to each other */ }
 
-    const { activeConversationInfo } = useContext(DirectConversationContext);
-    const { setLoading } = useContext(LoadingContext)
+    const { chatbox } = useContext(ConversationContext);
+    // const chatbox = null;
     const { user, token } = useContext(UserContext);
-    // const [stompJsClient.current, setStompJsClient.current] = useState(null);
-    const stompJsClient = useRef(null);
-    // const user = user;
-    //TODO: clean all the code (every component)
+
 
     const chatBodyRef = useRef(null);
     const inputBoxRef = useRef(null);
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [userInput, setUserInput] = useState("");
-    const [currentConversation, setCurrentConversation] = useState({
-        conversationId: null,
-        conversationName: null,
-        conversationAvatar: null,
-        members: {}, // this is a map of users, key is the user id, value is the user object
-        messageMap: {}, // this is a map of messages, key is the message id, value is the message object (for easy access)
-        messageList: [], // this is the list of messages, used to display the messages in the chat box
-    });
-
     const [repliedMessageId, setRepliedMessageId] = useState(null);
-
-    useEffect(() => {
-        //TODO: please add comment for this
-        connectWebSocket();
-        return () => {
-            closeWebSocketConnection();
-        }
-    }, [currentConversation.conversationId])
-
-    useEffect(() => {
-        if (activeConversationInfo) {
-            fetchConversationDetail(activeConversationInfo.id);
-        }
-    }, [activeConversationInfo])
-
-    const fetchConversationDetail = async () => {
-        const header = {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }
-
-        const id = activeConversationInfo.id;
-        setLoading(true);
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/chat/get-direct-conversation-messages?conversationId=${id}`, header)
-        setLoading(false);
-        const data = response.data.data;
-
-        const conversation = {
-            conversationId: data.conversationId,
-            conversationName: data.conversationName,
-            conversationAvatar: data.conversationAvatar,
-            otherUsers: data.otherUsers,
-            members: data.members,
-            messageMap: data.messages, // the server returns a map of messages, key is the message id, value is the message object
-            messageList: Object.values(data.messages)
-        }
-
-        setCurrentConversation(conversation);
-
-    }
-
-    const connectWebSocket = async () => {
-        console.log("Trying to connect to websocket");
-        // fix the bug he value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard '*' when the request's credentials mode is 'include'. The credentials mode of requests initiated by the XMLHttpRequest is controlled by the withCredentials attribut
-        let Sock = new SockJS(`${process.env.REACT_APP_BACKEND_URL}/ws`);
-        stompJsClient.current = over(Sock);
-        await stompJsClient.current.connect({}, onConnected, onError);
-
-    }   
-
-
-    const onConnected = () => {
-        console.log("Connected to websocket");
-        if (stompJsClient.current && stompJsClient.current.connected) {
-            stompJsClient.current.subscribe(`/topic/chat/${currentConversation.conversationId}`, onReceivedMessage);
-        }
-    }
-
-    const onError = (err) => {
-        console.log(err);
-        // displayPopup("Something went wrong!", "Connect to server failed!, please contact the admin!", true)
-    }
-
-    // connectWebSocket();
-
-    const closeWebSocketConnection = () => {
-        if (stompJsClient.current && stompJsClient.current.connected ) {
-            stompJsClient.current.disconnect();
-        }
-    }
-
-    const onReceivedMessage = (payload) => {
-        console.log("=====================ON RECEIVED MESSAGE============================");
-        let message = JSON.parse(payload.body);
-        console.log(message);
-
-        setCurrentConversation(prev => {
-            return {
-                ...prev,
-                messageMap: {...prev.messageMap, [message.id]: message},
-                messageList:  [...prev.messageList, message]
-            }
-        })
-
-    }
-
     // Scroll to the bottom when the component mounts or when new messages arrive
     useEffect(() => {
         scrollToBottom();
-    }, [currentConversation.messageList]); // This will trigger when messages change
+    }, [chatbox]); // This will trigger when messages change
 
     // Function to scroll to the bottom of the chat body
     function scrollToBottom() {
@@ -152,7 +55,7 @@ export default function () {
             setRepliedMessageId(null);
 
         }
-        sendMessageToServer(newMessage, currentConversation.conversationId);
+        sendMessageToServer(newMessage, chatbox.conversationId);
     }
 
 
@@ -164,12 +67,12 @@ export default function () {
             }
         }
         const body = {
-            conversationId: currentConversation.conversationId,
+            conversationId: chatbox.conversationId,
             content: message.content,
             repliedMessageId: message.repliedMessageId
         }
 
-        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/chat/send-direct-message`, body, header)
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/chat/send-message`, body, header)
         // console.log();
         const newMessage = response.data.data;
 
@@ -177,8 +80,6 @@ export default function () {
 
 
 
-    // wait for data to be loaded
-    if (!user || !currentConversation) return null;
 
     // clean the code, create a state for message array
     function getRepliedMessageIfAny(repliedMessageId) {
@@ -192,93 +93,124 @@ export default function () {
     }
 
     function getMessageSender(messageId) {
-        const repliedMessage = currentConversation.messageMap[messageId];
+        const repliedMessage = chatbox.messageMap[messageId];
         const senderId = repliedMessage.senderId;
-        return currentConversation.members[senderId];
+        return chatbox.memberMap[senderId];
     }
 
     function getPreviousMessage(index) {
         if (index == 0) return null;
-        return currentConversation.messageList[index - 1];
+        return chatbox.messageList[index - 1];
     }
 
     function getNextMessage(index) {
-        if (index == currentConversation.messageList.length - 1) return null;
-        return currentConversation.messageList[index + 1];
+        if (index == chatbox.messageList.length - 1) return null;
+        return chatbox.messageList[index + 1];
     }
 
     function getMessageById(id) {
-        return currentConversation.messageMap[id];
+        return chatbox.messageMap[id];
     }
 
+    const toggleShowEmojiPicker = () => {
+        console.log("toggleShowEmojiPicker");
+        setShowEmojiPicker(val => !val);
+    }
+
+    const handleEmojiSelect = (emoji) => {
+        console.log("handleEmojiSelect", emoji);
+        setUserInput(val => val + emoji.native);
+        inputBoxRef.current.focus();
+        // setShowEmojiPicker(false);
+    }
+
+
+    const style = (!chatbox.conversationName && !chatbox.conversationAvatar) ? "skeleton-Chat" : "";
 
 
     return (
         <ReplyMessageContext.Provider value={{ repliedMessageId, setRepliedMessageId, inputBoxRef }}>
-            {currentConversation &&
+            <div className={`Chat ${style}`}>
 
-                <div className="chat">
-                    <div className="chat-header">
-                        <div className="avatar">
-                            <img src={currentConversation.conversationAvatar} alt="" />
-                        </div>
-                        <div className="name">{currentConversation.conversationName}</div>
+                <div className="chat-header">
+                    <div className="avatar">
+                        <img src={chatbox.conversationAvatar} alt="" />
                     </div>
-                    <div className="chat-body" ref={chatBodyRef}>
-                        <div className="message-container">
-                            {
-                                currentConversation.messageList.map((message, index) => {
-                                    const isMe = message.senderId == user.id;
-                                    const previousMessage = getPreviousMessage(index)
-                                    const nextMessage = getNextMessage(index)
-                                    const sender = getMessageSender(message.id)
-                                    const repliedMessage = getRepliedMessageIfAny(message.repliedMessageId)
+                    <div className="name">{chatbox.conversationName}</div>
+                </div>
+                <div className="chat-body" ref={chatBodyRef}>
+                    <div className="message-container">
+                        {
+                            chatbox.messageList.map((message, index) => {
+                                const isMe = message.senderId === user.id;
+                                const previousMessage = getPreviousMessage(index)
+                                const nextMessage = getNextMessage(index)
+                                const sender = getMessageSender(message.id)
+                                const repliedMessage = getRepliedMessageIfAny(message.repliedMessageId)
 
-                                    return (
-                                        <Message
-                                            isMe={isMe}
-                                            repliedMessage={repliedMessage}
-                                            seenAvatar={null} // skip this for now
-                                            isSeen={false} // skip this for now
-                                            isSent={false} // skip this for
-                                            previousMessage={previousMessage}
-                                            sender={sender}
-                                            message={message}
-                                            nextMessage={nextMessage}
-                                        />
-                                    )
-
-
-                                })
-                            }
+                                return (
+                                    <Message
+                                        isMe={isMe}
+                                        repliedMessage={repliedMessage}
+                                        seenAvatar={null} // skip this for now
+                                        isSeen={false} // skip this for now
+                                        isSent={false} // skip this for
+                                        previousMessage={previousMessage}
+                                        sender={sender}
+                                        message={message}
+                                        nextMessage={nextMessage}
+                                    />
+                                )
 
 
-                        </div>
-                    </div>
-                    <div className="chat-footer">
-                        {repliedMessageId &&
-                            <ReplyToInputFooter {...getRepliedMessageIfAny(repliedMessageId)}
-                            />
+                            })
                         }
-                        <div className="input-container">
-                            <input
-                                ref={inputBoxRef}
-                                type="text"
-                                placeholder="Type a message..."
-                                value={userInput}
-                                onChange={e => setUserInput(e.target.value)}
-                                onKeyDown={e => {
-                                    if (e.key == "Enter") {
-                                        handleUserInput();
-                                    }
-                                }}
 
-                            />
-                            <i class="fa-solid fa-paper-plane" onClick={handleUserInput}></i>
-                        </div>
+
                     </div>
                 </div>
-            }
+
+                <div className="chat-footer">
+                    {repliedMessageId &&
+                        <ReplyToInputFooter {...getRepliedMessageIfAny(repliedMessageId)}
+                        />
+                    }
+
+
+                    <div className="input-container">
+                    <i class="fa-regular fa-face-smile" onClick={toggleShowEmojiPicker}></i>
+                        <input
+                            ref={inputBoxRef}
+                            type="text"
+                            placeholder="Type a message..."
+                            value={userInput}
+                            onChange={e => setUserInput(e.target.value)}
+                            onKeyDown={e => {
+                                if (e.key == "Enter") {
+                                    handleUserInput();
+                                }
+                            }}
+
+                        />
+
+                        {
+                            showEmojiPicker &&
+                            <div className="emoji-picker">
+                                <Picker data={data}
+                                    onEmojiSelect={handleEmojiSelect}
+                                    theme={"light"}
+                                    // onClickOutside={() => {
+                                    //     if (sho)
+                                    // }}
+                                />
+                            </div>
+                        }
+
+                        <i class="fa-solid fa-paper-plane" onClick={handleUserInput}></i>
+                    </div>
+                </div>
+            </div>
+
 
         </ReplyMessageContext.Provider>
 

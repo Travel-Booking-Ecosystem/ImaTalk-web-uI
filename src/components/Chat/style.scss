@@ -1,4 +1,4 @@
-.chat {
+.Chat {
     width: 90%;
     height: 100vh;
     display: flex;
@@ -35,6 +35,7 @@
         flex: 1;
         overflow-y: auto;
         background: rgba(242, 242, 242, 0.945);
+
         .message-container {
             display: flex;
             flex-direction: column;
@@ -49,7 +50,9 @@
         border-top: 1px solid rgba(0, 0, 0, 0.297);
         background: white;
         padding: 10px;
-        // height: 40px;   
+        // height: 40px; 
+        display: relative;
+
 
 
         .input-container {
@@ -60,6 +63,10 @@
             padding: 0px 30px;
             background: #e7e6e6bb;
             border-radius: 5px;
+            // background: red;
+
+
+
 
             input {
                 width: 100%;
@@ -79,11 +86,57 @@
 
             i {
                 cursor: pointer;
-
+                font-size: 20px;
+                margin:0 5px;
                 &:hover {
                     color: #0095f6;
                 }
             }
         }
+
+        .emoji-picker {
+            // background: red;
+            position: absolute;
+            // width: fit-content;
+            // width: 100px;
+            width: fit-content;
+            right: 30px;
+            
+            bottom: 50px;
+            // top: -00px;
+            // display: none;
+            // background: red;
+            // padding: 50px;
+        }
     }
+
+
+
+}
+
+.skeleton-Chat {
+    .chat-header {
+        .avatar {
+            img {
+                background: rgb(216, 216, 216);
+                animation: skeleton-loading 1s linear infinite alternate;
+
+            }
+        }
+
+        .name {
+            background: rgb(216, 216, 216);
+            animation: skeleton-loading 1s linear infinite alternate;
+            width: 150px;
+            height: 20px;
+            border-radius: 10px;
+        }
+    }
+
+
+}
+
+
+.skeleton {
+    animation: skeleton-loading 1s linear infinite alternate;
 }

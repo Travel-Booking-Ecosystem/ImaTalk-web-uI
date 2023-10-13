@@ -1,0 +1,178 @@
+.UserProfileModal {
+    padding: 0px 30px 10px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .info {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        // height: 100px
+        .avatar {
+            position: relative;
+
+            img {
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 3px solid rgba(0, 0, 0, 0.356);
+            }
+
+            .change-avatar-btn {
+                position: absolute;
+                bottom: 3px;
+                right: 3px;
+                background: white;
+                padding: 5px;
+                border-radius: 50%;
+                border: 1px solid rgba(0, 0, 0, 0.263);
+                margin: 0;
+                cursor: pointer;
+                &:hover {
+                    background: rgb(0, 149, 255);
+                    color: white;
+                }
+            }
+
+        }
+
+        .text {
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 3px;
+
+            // background: red;
+            // align-self: flex-start;
+            // gap: 20px;
+            // height: 100%;
+            .display-name {
+                font-weight: bold;
+                font-size: 24px;
+            }
+
+            .email,
+            .username {
+                color: rgba(0, 0, 0, 0.785)
+            }
+        }
+
+
+    }
+
+    .input-container {
+        display: flex;
+        flex-direction: column;
+        // justify-content: space-between;
+        gap: 10px;
+
+        .label {
+            font-weight: bold;
+            font-size: 18px;
+
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            // background: rgb(228, 228, 228);
+            // border: 1px solid rgba(0, 0, 0, 0.4);
+            // padding: 10px;
+            border-radius: 5px;
+
+
+            .label-name {
+                margin: 0;
+                padding-right: 10px;
+                border-right: 2px solid;
+                // width: 100px;
+                flex-shrink: 0;
+            }
+
+            input {
+                border: 1px solid rgba(0, 0, 0, 0.6);
+                height: 100%;
+                width: 100%;
+                padding: 10px;
+                font-size: 18px;
+                border-radius: 5px;
+                background: transparent;
+
+                &:focus {
+                    outline: none;
+                }
+            }
+
+            .edit-btn {
+                // color: blue;
+                width: fit-content;
+                font-weight: bold;
+                cursor: pointer;
+                background: rgb(178, 178, 178, 0.5);
+                padding: 10px 10px;
+                border-radius: 5px;
+                margin: 0;
+
+                &:hover {
+                    background: rgba(121, 121, 121, 0.5);
+
+                }
+            }
+        }
+
+        .edit-name-btn {
+            // color: blue;
+            width: fit-content;
+            font-weight: bold;
+            cursor: pointer;
+            background: rgb(178, 178, 178, 0.5);
+            padding: 5px 10px;
+            // border-radius: 5px;
+            margin: 0;
+
+            &:hover {
+                background: rgba(121, 121, 121, 0.5);
+
+            }
+        }
+    }
+
+    .btn-container {
+        display: flex;
+        flex-direction: column;
+        // justify-content: space-between;
+        align-items: center;
+        gap: 5px;
+
+        .btn {
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            width: 150px;
+        }
+
+        .save-btn {
+            background: rgb(0, 149, 255);
+            // align-self: flex-start;
+            color: white;
+
+            &:hover {
+                background: rgb(0, 149, 255, 0.8);
+            }
+        }
+
+        .logout-btn {
+            color: rgb(222, 2, 2);
+
+            // color: white;
+            &:hover {
+                background: rgb(222, 2, 2, 0.8);
+                color: white;
+            }
+        }
+    }
+}
