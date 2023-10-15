@@ -124,7 +124,8 @@
                 width: 100%;
 
                 img {
-                    width: 110px;
+                    // width: 110px; // imatalk logo
+                    width: 50px; // dsy logo
                     height: auto;
                     // background: blue;   
                     object-fit: cover;
@@ -149,28 +150,36 @@
 
                 }
             }
+            .error-text {
+                max-width: 350px;
+                left: 0;
+                color: red;
+                font-size: 0.8rem;
+                font-weight: bold;
+            }
+
 
             .input {
                 display: grid;
                 grid-template-columns: 30% 70%;
                 align-items: flex-end;
                 width: 350px;
-                margin: 5px 0;
+                margin: 10px 0;
 
-                // cursor: pointer;
-                // background: red;
                 .label-text {
                     padding: 0 5px;
-
+                    width: 100px;
+                    flex-shrink: 0;
                     margin: 2px 0;
                     font-size: 1em;
                     font-weight: bold;
                 }
 
+                
                 input {
                     box-sizing: border-box;
                     width: 100%;
-                    height: 40px;
+                    height: 25px;
                     border-radius: 3px;
                     border: none;
                     border-bottom: 2px solid #00000082;
@@ -186,6 +195,23 @@
                 }
             }
 
+            .show-password-btn {
+
+
+
+                // width: 350px;
+                color: #5302FF;
+                padding: 10px 5px;
+                // border-radius: 5px;
+                align-self: flex-start;
+                font-size: 0.8rem;
+                font-weight: bold;
+                transition: 0.3s ease-in-out;
+                cursor: pointer;
+                // make it takes 
+                // make it takes up 2 columns in the gr
+            }
+
             .submit-btn {
                 width: 350px;
                 background: #5302FF;
@@ -198,8 +224,6 @@
                 font-weight: bold;
                 transition: 0.3s ease-in-out;
                 cursor: pointer;
-                // make it takes up 2 columns in the gr
-
 
                 &:hover {
                     background: #AC59FF;
@@ -216,5 +240,7 @@
             transition: 0.3s ease-in-out;
 
         }
+
+
     }
 }

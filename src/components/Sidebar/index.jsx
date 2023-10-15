@@ -13,7 +13,7 @@ import Loading from "../Loading";
 import ModalContainer from "../Modal/ModalContainer";
 import ModalContext from "../../contexts/ModalContext";
 import UserProfileModal from "../Modal/UserProfileModal";
-export default function () {
+export default function ({loading}) {
     console.log("log from sidebar");
     const {
         // directConversationList,
@@ -86,6 +86,7 @@ export default function () {
             {
                 activeTab === "chat-tab" ?
                     <ConversationList
+                        loading={loading}
                         conversationList={conversationList}
                         handleClickConversation={handleClickConversation}
                         activeConversationInfo={activeConversation}

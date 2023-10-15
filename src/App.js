@@ -8,6 +8,10 @@ import UserContext from './contexts/UserContext';
 import axios from 'axios';
 import Loading from './components/Loading';
 import LoadingContext from './contexts/LoadingContext';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import ToastContext from "./contexts/ToastContext";
+
 function App() {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
@@ -60,27 +64,55 @@ function App() {
   }
 
 
+  const showToast = (message) => {
+    toast.success(message, {
+      position: "top-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
+  }
+
+
+
   return (
-    <LoadingContext.Provider value={{ loading, setLoading }}>
-      <UserContext.Provider value={{ user, setUser, token, setToken }}>
-        <Loading loading={loading} />
+    <ToastContext.Provider value={{ showToast }}>
 
-        <div className="App">
+      <LoadingContext.Provider value={{ loading, setLoading }}>
+        <UserContext.Provider value={{ user, setUser, token, setToken }}>
+          <Loading loading={loading} />
 
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/logout" element={<Logout />} />
+          <div className="App">
 
-          </Routes>
-        </div >
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/logout" element={<Logout />} />
+
+            </Routes>
+          </div >
+          <ToastContainer
+            position="top-center"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="colored"
+          />
 
 
-      </UserContext.Provider>
-    </LoadingContext.Provider>
-
-
+        </UserContext.Provider>
+      </LoadingContext.Provider>
+    </ToastContext.Provider>
 
 
 

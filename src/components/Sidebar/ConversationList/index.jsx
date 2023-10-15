@@ -1,11 +1,12 @@
 import "./style.scss";
 import React, { useContext } from "react";
 import { formatTime, truncateString } from "../../../utils/Utils";
+import ImaTalkLogo from '../../../assests/images/dsy-logo.png'
+export default function ({ conversationList, handleClickConversation, activeConversationInfo, loading }) {
 
-export default function ({ conversationList, handleClickConversation, activeConversationInfo }) {
+    if (loading) {
+        // render skeleton if conversation list is empty (when loading)
 
-    if (!conversationList || conversationList.length === 0) {
-        console.log("conversationList is null");
         return (
             <div className="ConversationList">
                 {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) => {
@@ -21,7 +22,7 @@ export default function ({ conversationList, handleClickConversation, activeConv
     return (
         <div className="ConversationList">
             {(conversationList && conversationList.length > 0) ?
-               // render conversation list
+                // render conversation list
                 conversationList.map((conversation, index) => {
                     return (
                         <Conversation
@@ -33,14 +34,11 @@ export default function ({ conversationList, handleClickConversation, activeConv
                     )
                 })
                 :
-                // render skeleton if conversation list is empty (when loading)
-                [1, 2, 3, 4, 5, 6, 7, 8].map((item, index) => {
-                    return (
-                        <Conversation
-                            key={index}
-                        />
-                    )
-                })
+
+                <GreetingConversation
+                />
+
+
 
             }
 
@@ -99,6 +97,22 @@ function Conversation({ active, name, avatar, lastMessage, handleClickConversati
                 <div className="name">{name}</div>
                 <div className="last-message-content">{content}</div>
                 <div className="time">{formattedTime}</div>
+            </div>
+        </div>
+    )
+}
+
+function GreetingConversation() {
+    return (
+        <div className="Conversation active-conversation" onClick={() => { }}>
+            <div className="avatar">
+                <img src={ImaTalkLogo} alt="" />
+                <div className={`online-status online`}></div>
+            </div>
+            <div className="conversation-info">
+                <div className="name">ImaTalk</div>
+                <div className="last-message-content">Welcome to ImaTalk</div>
+                <div className="time">{ }</div>
             </div>
         </div>
     )

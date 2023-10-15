@@ -27,16 +27,20 @@ export default function () {
     });
     const [activeConversation, setActiveConversation] = useState(); // this is the active conversation info on the sidebar
     const { user, token } = useContext(UserContext);
-    const { setLoading } = useContext(LoadingContext);
+    const [ loadingSidebar, setLoadingSidebar ] = useState(false)
+    const [ loadingChatbox, setLoadingChatbox ] = useState(false)
     const stompJsClient = useRef(null);
     const [showModal, setShowModal] = useState(false);
     const [modalChildren, setModalChildren] = useState();
+
+
     useEffect(() => {
         if (user) {
             fetchSidebar();
         }
 
     }, [user])
+
 
 
     useEffect(() => {
@@ -158,7 +162,9 @@ export default function () {
             }
         }
 
+        setLoadingSidebar(true);
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/sidebar`, header);
+        setLoadingSidebar(false);
         const sidebar = response.data.data;
 
 
@@ -177,7 +183,9 @@ export default function () {
             }
         }
 
+        setLoadingChatbox(true);
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/chat/conversation-chat-history?conversationId=${activeConversation.id}`, header);
+        setLoadingChatbox(false);
         const chatbox = response.data.data;
         console.log("chatbox", chatbox);
         setChatbox(chatbox);
@@ -185,29 +193,29 @@ export default function () {
 
 
     return (
-        <ModalContext.Provider value={{ setShowModal, setModalChildren }}>
-            <ConversationContext.Provider
-                value={{
-                    conversationList,
-                    chatbox,
-                    activeConversation,
-                    setActiveConversation,
-                    setConversationList,
-                    setChatbox
+            <ModalContext.Provider value={{ setShowModal, setModalChildren }}>
+                <ConversationContext.Provider
+                    value={{
+                        conversationList,
+                        chatbox,
+                        activeConversation,
+                        setActiveConversation,
+                        setConversationList,
+                        setChatbox
 
-                }}>
-                <div className="Home">
-                    <Sidebar />
-                    <Chat />
-                    <ModalContainer
-                        showModal={showModal}
-                        children={<UserProfileModal/>}
-                        onClose={() => setShowModal(false)}
-                    />
-                </div>
+                    }}>
+                    <div className="Home">
+                        <Sidebar loading={loadingSidebar}/>
+                        <Chat loading={loadingChatbox}/>
+                        <ModalContainer
+                            showModal={showModal}
+                            children={<UserProfileModal />}
+                            onClose={() => setShowModal(false)}
+                        />
+                    </div>
 
-            </ConversationContext.Provider >
-        </ModalContext.Provider>
+                </ConversationContext.Provider >
+            </ModalContext.Provider>
 
 
     )

@@ -87,7 +87,8 @@
             i {
                 cursor: pointer;
                 font-size: 20px;
-                margin:0 5px;
+                margin: 0 5px;
+
                 &:hover {
                     color: #0095f6;
                 }
@@ -101,7 +102,7 @@
             // width: 100px;
             width: fit-content;
             right: 30px;
-            
+
             bottom: 50px;
             // top: -00px;
             // display: none;
@@ -139,4 +140,49 @@
 
 .skeleton {
     animation: skeleton-loading 1s linear infinite alternate;
+}
+
+
+.GreetingChat {
+    display: grid;
+    place-items: center;
+    // background: red;
+    width: 100%;
+
+    .content {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        .logo {
+            img {
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+                // border-radius: 50%;
+            }
+        }
+
+        .title {
+            font-size: 2rem;
+            padding: 20px;
+            width: 300px;
+            word-wrap: break-word;
+            background: #5302FF;
+            border-radius: 15px;
+            color: #FFE920;
+
+            font-weight: bold;
+            margin: 0;
+
+        }
+
+        .text {
+            // font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0;
+            color: #5302FF;
+        }
+    }
 }

@@ -12,8 +12,8 @@ import { over } from 'stompjs';
 import LoadingContext from "../../contexts/LoadingContext";
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
-
-export default function () {
+import Logo from '../../assests/images/dsy-logo.png'
+export default function ({ loading }) {
 
     const { chatbox } = useContext(ConversationContext);
     // const chatbox = null;
@@ -125,7 +125,13 @@ export default function () {
     }
 
 
-    const style = (!chatbox.conversationName && !chatbox.conversationAvatar) ? "skeleton-Chat" : "";
+
+
+    const style = (loading) ? "skeleton-Chat" : "";
+
+    if (!chatbox.conversationName && !chatbox.conversationAvatar) {
+        return <GreetingChat />
+    }
 
 
     return (
@@ -178,7 +184,7 @@ export default function () {
 
 
                     <div className="input-container">
-                    <i class="fa-regular fa-face-smile" onClick={toggleShowEmojiPicker}></i>
+                        <i class="fa-regular fa-face-smile" onClick={toggleShowEmojiPicker}></i>
                         <input
                             ref={inputBoxRef}
                             type="text"
@@ -199,9 +205,9 @@ export default function () {
                                 <Picker data={data}
                                     onEmojiSelect={handleEmojiSelect}
                                     theme={"light"}
-                                    // onClickOutside={() => {
-                                    //     if (sho)
-                                    // }}
+                                // onClickOutside={() => {
+                                //     if (sho)
+                                // }}
                                 />
                             </div>
                         }
@@ -214,5 +220,20 @@ export default function () {
 
         </ReplyMessageContext.Provider>
 
+    )
+}
+
+//TODO: clean all the code when new user login, he has no conversation, no chatbox, no message, no member, no conversationName, no conversationAvatar
+function GreetingChat() {
+    return (
+        <div className="GreetingChat">
+            <div className="content">
+                <div className="logo">
+                    <img src={Logo} alt="" />
+                </div>
+                <p className="title">Wellcome to ImaTalk</p>
+                <p className="text">Search and add friends to start your conversation now!</p>
+            </div>
+        </div>
     )
 }
