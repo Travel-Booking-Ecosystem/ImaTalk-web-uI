@@ -108,7 +108,7 @@
 .skeleton-UserInfo {
 
     .user-avatar {
-    
+
         // animation: skeleton-loading 1s linear infinite alternate;
 
         img {
@@ -151,7 +151,7 @@
     // background: red;
     padding: 10px 0;
     justify-content: center;
-    gap: 20%;
+    gap: 40px;
 
     .tab {
         display: flex;
@@ -208,6 +208,7 @@
 .skeleton {
     animation: skeleton-loading 1s linear infinite alternate;
 }
+
 
 @keyframes skeleton-loading {
     0% {

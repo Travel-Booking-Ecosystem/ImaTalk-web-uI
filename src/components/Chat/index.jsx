@@ -13,9 +13,9 @@ import LoadingContext from "../../contexts/LoadingContext";
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 import Logo from '../../assests/images/dsy-logo.png'
-export default function ({ loading }) {
+export default function ({ chatbox }) {
 
-    const { chatbox } = useContext(ConversationContext);
+    // const { chatbox } = useContext(ConversationContext);
     // const chatbox = null;
     const { user, token } = useContext(UserContext);
 
@@ -72,6 +72,7 @@ export default function ({ loading }) {
             repliedMessageId: message.repliedMessageId
         }
 
+        
         const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/chat/send-message`, body, header)
         // console.log();
         const newMessage = response.data.data;
@@ -127,11 +128,13 @@ export default function ({ loading }) {
 
 
 
-    const style = (loading) ? "skeleton-Chat" : "";
+    // const style = (loading) ? "skeleton-Chat" : "";
+    const style = (!chatbox.conversationName && !chatbox.conversationAvatar) ? "skeleton-Chat" : "";
 
-    if (!chatbox.conversationName && !chatbox.conversationAvatar) {
-        return <GreetingChat />
-    }
+    // if (!chatbox.conversationName && !chatbox.conversationAvatar) {
+        
+    //     return <GreetingChat />
+    // }
 
 
     return (

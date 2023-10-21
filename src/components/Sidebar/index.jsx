@@ -1,38 +1,41 @@
 import "./style.scss";
 import React, { useContext, useRef } from "react";
-import DirectConversationContext from "../../contexts/ConversationContext";
+import ConversationContext from "../../contexts/ConversationContext";
 import { useState, useEffect } from "react";
 import SearchBar from "./SearchBar";
 import ConversationList from "./ConversationList";
-import NotificationList from "./NotificationList";
+import NotificationList from "./FriendTab";
 import UserContext from "../../contexts/UserContext";
 import SockJS from 'sockjs-client';
 import { over } from 'stompjs';
 import { messages } from "../../utils/data";
-import Loading from "../Loading";
 import ModalContainer from "../Modal/ModalContainer";
 import ModalContext from "../../contexts/ModalContext";
 import UserProfileModal from "../Modal/UserProfileModal";
-export default function ({loading}) {
+import FriendTab from "./FriendTab";
+import axios from "axios";
+
+export default function ({ conversationList, setConversationList, friendList, setFriendList, friendRequestList, setFriendRequestList }) {
+    console.log("Friend Request List 1", friendRequestList);
+
     console.log("log from sidebar");
     const {
         // directConversationList,
         // groupConversationList,
-        conversationList,
-        setConversationList,
         activeConversation,
         setActiveConversation,
-    } = useContext(DirectConversationContext)
+    } = useContext(ConversationContext)
 
 
     const { setShowModal, setModalChildren } = useContext(ModalContext);
 
-    const { user } = useContext(UserContext);
+
+    const { user, token } = useContext(UserContext);
+
+
     // const user =  {}
 
-    const [activeTab, setActiveTab] = useState("chat-tab");
-    const stompJsClient = useRef(null);
-
+    const [activeTab, setActiveTab] = useState("conversation-tab");
 
 
 
@@ -64,7 +67,7 @@ export default function ({loading}) {
         console.log("openUserProfileModal")
         console.log("user", user);
         setModalChildren(
-            <UserProfileModal/>);
+            <UserProfileModal />);
         setShowModal(true);
     }
     // console.log("activeConversationInfo", activeConversationInfo);
@@ -73,6 +76,52 @@ export default function ({loading}) {
     if (!user) return null;
 
 
+    const handleAcceptFriendRequest = async (id) => {
+        if (!token) return null;
+        const header = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/user/accept-friend?requestId=${id}`, {}, header)
+        console.log("response", response);
+
+        // if accept friend request successfully, fetch friend request list and friend list again
+        if (response.data.status == 200) {
+            fetchFriendRequestList();
+            fetchFriendList();
+        }
+    }
+
+    const fetchFriendList = async () => {
+        const header = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/friends`, header);
+        const responseData = response.data.data;
+
+
+        setFriendList(responseData);
+
+    }
+
+
+    const fetchFriendRequestList = async () => {
+        const header = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+
+
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/friend-request`, header);
+        console.log("response", response.data.data);
+        setFriendRequestList(response.data.data);
+    }
     return (
         <div className="Sidebar">
 
@@ -81,17 +130,25 @@ export default function ({loading}) {
             <TabContainer
                 handleClickTab={handleClickTab}
                 checkIfActiveTab={checkIfActiveTab}
+                friendNotificationCount={friendRequestList.length}
             />
 
             {
-                activeTab === "chat-tab" ?
+                activeTab === "conversation-tab" ?
                     <ConversationList
-                        loading={loading}
+                        // loading={loading}
                         conversationList={conversationList}
                         handleClickConversation={handleClickConversation}
                         activeConversationInfo={activeConversation}
                     />
-                    : null
+                    : activeTab === "friend-tab" ?
+                        <FriendTab
+                            friendList={friendList}
+                            friendRequestList={friendRequestList}
+                            handleAcceptFriendRequest={handleAcceptFriendRequest}
+                        />
+                        :
+                        null
 
 
             }
@@ -119,18 +176,23 @@ function UserInfo({ avatar, displayName, username, handleClick }) {
     )
 }
 
-function TabContainer({ handleClickTab, checkIfActiveTab }) {
+function TabContainer({ handleClickTab, checkIfActiveTab, friendNotificationCount }) {
 
 
     return (
         <div className="TabContainer">
-            <div className={`tab chat-tab ${checkIfActiveTab("chat-tab")}`} onClick={() => handleClickTab("chat-tab")}>
+            <div className={`tab chat-tab ${checkIfActiveTab("conversation-tab")}`} onClick={() => handleClickTab("conversation-tab")}>
                 <i class="tab-icon fa-solid fa-comment"><p className="noti-red-dot">2</p></i>
-                <p class='tab-name'>Chats</p>
+                <p class='tab-name'>Conversations</p>
             </div>
 
-            <div className={`tab group-tab ${checkIfActiveTab('group-tab')}`} onClick={() => handleClickTab("group-tab")}>
-                <i class="tab-icon fa-solid fa-user-group"><p className="noti-red-dot">5</p></i>
+            <div className={`tab group-tab ${checkIfActiveTab('friend-tab')}`} onClick={() => handleClickTab("friend-tab")}>
+                <i class="tab-icon fa-solid fa-user-group">
+                    {friendNotificationCount > 0 &&
+                        <p className="noti-red-dot">{friendNotificationCount}</p>
+                    }
+                </i>
+
                 <p class='tab-name'>Friends</p>
             </div>
 

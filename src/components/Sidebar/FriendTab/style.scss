@@ -1,101 +1,75 @@
-
-.SearchBar {
-    // background-color:red;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    background-color: #dbdbdb;
-    // margin: 10px 0;
-    padding: 5px 10px;
-    position: relative;
-    input {
-        width: 100%;
-        height: 30px;
-        padding: 0 10px;
-        font-size: 1rem;
-        border: none;
-        font-size: 0.8em;
-        background: transparent;
-
-        &:focus {
-            outline: none;
-        }
-    }
-
-    .close-search-box {
-        // position: absolute;
-        // right: 10px;
-        // top: 50%;
-        // transform: translateY(-50%);
-        // font-size: 1.2rem;
-        color: #969696;
-        cursor: pointer;
-
-        &:hover {
-            color: #000;
-        }
-    }
-
-    .search-result {
-        position: absolute;
-        top: 100%;
-        z-index: 100;
-        height: calc(100vh - 150px);
-        overflow-y: auto;
-        width: 100%;
-        background: white;
-        // background: red;
-
-        .tab-container {
-            display: flex;
-            justify-content: space-around;
-            border-bottom: 3px solid rgba(0, 0, 0, 0.250);
-            padding: 10px 0;
-            margin: 10px 0;
-            .tab {
-                margin: 0;
-                cursor: pointer;
-                font-weight: bold;
-            }
-
-            .active-tab {
-                color: #0095f6;
-
-            }
-        }
-
-        
-        &::-webkit-scrollbar-track {
-            -webkit-box-shadow: inset 0 0 2px rgba(186, 186, 186, 0.3);
-            background-color: #ffffff;
-        }
-
-        &::-webkit-scrollbar {
-            width: 5px;
-            background-color: #F5F5F5;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background-color: #898888;
-            border: 2px solid rgb(133, 133, 133);
-        }
-
-    }
-}
-
-
-.people-container {
+.FriendTab {
     display: flex;
     flex-direction: column;
     gap: 10px;
     // height: 100%;
-    overflow-y: auto;
-    padding: 0 0px;
-    // background: red;
+    overflow-y: scroll;
+    padding: 0 0 20px 0;
+    &::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 2px rgba(186, 186, 186, 0.3);
+        background-color: #ffffff;
+    }
+
+    &::-webkit-scrollbar {
+        width: 5px;
+        background-color: #F5F5F5;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #898888;
+        border: 2px solid rgb(133, 133, 133);
+    }
 }
 
-.People {
+
+.friend-request-container {
+
+    .show-request-btn {
+        display: flex;
+        // justify-content: center;
+        // align-items: center;
+        padding: 10px 0;
+        font-size: 0.8rem;
+        // background: red;
+        gap: 5px;
+        color: #0095f6;
+        cursor: pointer;
+
+        .btn-text {
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        i {
+            display: grid;
+            place-content: center;
+        }
+
+
+
+    }
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+
+
+    // &:last-child {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid rgba(0, 123, 206, 0.3);
+    // }
+}
+
+.friend-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.FriendRequest,
+.Friend {
     display: flex;
     padding: 10px;
     border-radius: 10px;
@@ -150,6 +124,7 @@
         flex-direction: column;
         // background: powderblue;
         height: 60px;
+
         // background: pink;
         .displayName {
             font-size: 1.1rem;
@@ -174,7 +149,7 @@
         }
     }
 
-    .add-friend-btn {
+    .accept-btn {
         position: absolute;
         right: 10px;
         bottom: 0%;
@@ -206,6 +181,6 @@
         font-weight: bold;
         font-size: 0.8rem;
         cursor: pointer;
-        
+
     }
 }

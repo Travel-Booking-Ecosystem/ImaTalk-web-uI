@@ -4,7 +4,7 @@ import { formatTime, truncateString } from "../../../utils/Utils";
 import ImaTalkLogo from '../../../assests/images/dsy-logo.png'
 export default function ({ conversationList, handleClickConversation, activeConversationInfo, loading }) {
 
-    if (loading) {
+    if (!conversationList?.length) {
         // render skeleton if conversation list is empty (when loading)
 
         return (

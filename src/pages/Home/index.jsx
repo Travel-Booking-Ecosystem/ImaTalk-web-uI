@@ -15,8 +15,8 @@ import UserProfileModal from "../../components/Modal/UserProfileModal";
 import ModalContext from "../../contexts/ModalContext";
 
 export default function () {
+    ;
 
-    const [conversationList, setConversationList] = useState();
     const [chatbox, setChatbox] = useState({
         conversationId: null,
         conversationName: null,
@@ -27,8 +27,15 @@ export default function () {
     });
     const [activeConversation, setActiveConversation] = useState(); // this is the active conversation info on the sidebar
     const { user, token } = useContext(UserContext);
-    const [ loadingSidebar, setLoadingSidebar ] = useState(false)
-    const [ loadingChatbox, setLoadingChatbox ] = useState(false)
+    const [loadingSidebar, setLoadingSidebar] = useState(true)
+    const [loadingChatbox, setLoadingChatbox] = useState(true)
+
+    const [conversationList, setConversationList] = useState();
+    const [friendList, setFriendList] = useState([]);
+    const [friendRequestList, setFriendRequestList] = useState([]);
+    const [peopleList, setPeopleList] = useState([])
+
+
     const stompJsClient = useRef(null);
     const [showModal, setShowModal] = useState(false);
     const [modalChildren, setModalChildren] = useState();
@@ -36,7 +43,10 @@ export default function () {
 
     useEffect(() => {
         if (user) {
-            fetchSidebar();
+            // fetchSidebar();
+            fetchConversationList();
+            fetchFriendList();
+            fetchFriendRequestList();
         }
 
     }, [user])
@@ -52,6 +62,8 @@ export default function () {
                 closeWebSocketConnection();
             }
 
+        } else {
+            setLoadingChatbox(false);
         }
     }, [activeConversation])
 
@@ -154,6 +166,51 @@ export default function () {
     }
 
 
+    const fetchConversationList = async () => {
+        const header = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/conversation-list`, header);
+        const responseData = response.data.data;
+
+        setConversationList(responseData.conversations);
+        const currentConversation = responseData.conversations.find(c => c.id === responseData.currentConversationId)
+        setActiveConversation(currentConversation);
+
+    }
+
+    const fetchFriendList = async () => {
+        const header = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/friends`, header);
+        const responseData = response.data.data;
+
+
+        setFriendList(responseData);
+
+    }
+
+
+    const fetchFriendRequestList = async () => {
+        const header = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+
+    
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/friend-request`, header);
+        console.log("response", response.data.data);
+        setFriendRequestList(response.data.data);
+    }
+
 
     const fetchSidebar = async () => {
         const header = {
@@ -171,12 +228,20 @@ export default function () {
         console.log("sidebar", sidebar);
         setConversationList(sidebar.conversations);
         // set the active conversation to be the current conversation that user was recently in
-        const currentConversation = sidebar.conversations.find(c => c.id === user.currentConversationId)
+        const currentConversation = sidebar.conversations.find(c => c.id === sidebar.currentConversationId)
         setActiveConversation(currentConversation);
     }
 
     const fetchConversationChatHistory = async () => {
-        if (!activeConversation) return null
+        console.log("Fetching conversation chat history")
+
+        if (!activeConversation) {
+            // if there is no active conversation, do nothing
+            console.log("No active conversation");
+            // setLoadingChatbox(false);
+            return;
+        }
+        console.log("Active conversation", activeConversation);
         const header = {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -186,6 +251,7 @@ export default function () {
         setLoadingChatbox(true);
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/chat/conversation-chat-history?conversationId=${activeConversation.id}`, header);
         setLoadingChatbox(false);
+
         const chatbox = response.data.data;
         console.log("chatbox", chatbox);
         setChatbox(chatbox);
@@ -193,29 +259,32 @@ export default function () {
 
 
     return (
-            <ModalContext.Provider value={{ setShowModal, setModalChildren }}>
-                <ConversationContext.Provider
-                    value={{
-                        conversationList,
-                        chatbox,
-                        activeConversation,
-                        setActiveConversation,
-                        setConversationList,
-                        setChatbox
+        <ModalContext.Provider value={{ setShowModal, setModalChildren }}>
+            <ConversationContext.Provider
+                value={{
+                    activeConversation,
+                    setActiveConversation,
+                }}>
+                <div className="Home">
+                    <Sidebar
+                        conversationList={conversationList}
+                        setConversationList={setConversationList}
+                        friendList={friendList}
+                        setFriendList={setFriendList}
+                        friendRequestList={friendRequestList}
+                        setFriendRequestList={setFriendRequestList}
+                    // loading={loadingSidebar}
+                    />
+                    <Chat chatbox={chatbox} />
+                    <ModalContainer
+                        showModal={showModal}
+                        children={<UserProfileModal />}
+                        onClose={() => setShowModal(false)}
+                    />
+                </div>
 
-                    }}>
-                    <div className="Home">
-                        <Sidebar loading={loadingSidebar}/>
-                        <Chat loading={loadingChatbox}/>
-                        <ModalContainer
-                            showModal={showModal}
-                            children={<UserProfileModal />}
-                            onClose={() => setShowModal(false)}
-                        />
-                    </div>
-
-                </ConversationContext.Provider >
-            </ModalContext.Provider>
+            </ConversationContext.Provider >
+        </ModalContext.Provider>
 
 
     )
