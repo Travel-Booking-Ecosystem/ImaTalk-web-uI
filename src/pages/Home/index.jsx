@@ -4,7 +4,7 @@ import Sidebar from "../../components/Sidebar";
 import Chat from "../../components/Chat";
 import { directConversationListData, groupConversationListData, messages, notifiationListData } from '../../utils/data.js'
 import ConversationContext from '../../contexts/ConversationContext';
-import { useEffect, useState, useContext, useRef } from 'react';
+import { useEffect, useState, useContext, useRef, useCallback } from 'react';
 import axios from "axios";
 import UserContext from "../../contexts/UserContext";
 import LoadingContext from "../../contexts/LoadingContext";
@@ -15,8 +15,13 @@ import UserProfileModal from "../../components/Modal/UserProfileModal";
 import ModalContext from "../../contexts/ModalContext";
 
 export default function () {
-    ;
 
+
+
+    const { user, token } = useContext(UserContext);
+
+
+    const [conversationList, setConversationList] = useState();
     const [chatbox, setChatbox] = useState({
         conversationId: null,
         conversationName: null,
@@ -26,44 +31,48 @@ export default function () {
         messageList: [], // this is the list of messages, used to display the messages in the chat box
     });
     const [activeConversation, setActiveConversation] = useState(); // this is the active conversation info on the sidebar
-    const { user, token } = useContext(UserContext);
-    const [loadingSidebar, setLoadingSidebar] = useState(true)
-    const [loadingChatbox, setLoadingChatbox] = useState(true)
+    const [notificationList, setNotificationList] = useState([]);
 
-    const [conversationList, setConversationList] = useState();
+    // i use this ref to store the active conversation id, because it is used in a callback function
+    // and so that i can access the up-to-date value of the active conversation id
+    const activeConversationId = useRef(null);
+    activeConversationId.current = activeConversation ? activeConversation.id : null;
+
     const [friendList, setFriendList] = useState([]);
     const [friendRequestList, setFriendRequestList] = useState([]);
-    const [peopleList, setPeopleList] = useState([])
-
 
     const stompJsClient = useRef(null);
     const [showModal, setShowModal] = useState(false);
     const [modalChildren, setModalChildren] = useState();
 
-
+    console.log("active conversation: ", activeConversation);
     useEffect(() => {
         if (user) {
-            // fetchSidebar();
-            fetchConversationList();
-            fetchFriendList();
             fetchFriendRequestList();
+            fetchFriendList();
+            fetchConversationList();
+            fetchNotificationList();
         }
 
     }, [user])
 
+    useEffect(() => {
+        connectWebSocket();
+
+        return () => {
+            closeWebSocketConnection();
+        }
+    }, [user])
 
 
     useEffect(() => {
         if (activeConversation) {
             fetchConversationChatHistory();
-            connectWebSocket();
+            // connectWebSocket();
 
-            return () => {
-                closeWebSocketConnection();
-            }
-
-        } else {
-            setLoadingChatbox(false);
+            // return () => {
+            //     closeWebSocketConnection();
+            // }
         }
     }, [activeConversation])
 
@@ -83,7 +92,6 @@ export default function () {
 
 
     const connectWebSocket = async () => {
-        console.log("Trying to connect to websocket");
         // fix the bug he value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard '*' when the request's credentials mode is 'include'. The credentials mode of requests initiated by the XMLHttpRequest is controlled by the withCredentials attribut
         let Sock = new SockJS(`${process.env.REACT_APP_BACKEND_URL}/ws`);
         stompJsClient.current = over(Sock);
@@ -93,7 +101,6 @@ export default function () {
 
     const onConnected = () => {
         if (stompJsClient.current && stompJsClient.current.connected && user) {
-            console.log("Connected to websocket to receive notification /topic/user/" + user.id);
 
             stompJsClient.current.subscribe(`/topic/user/${user.id}`, onReceivedMessage);
             // send a message to that user to notify that the user is online
@@ -102,7 +109,6 @@ export default function () {
     }
 
     const onError = (err) => {
-        console.log(err);
         // displayPopup("Something went wrong!", "Connect to server failed!, please contact the admin!", true)
     }
 
@@ -114,13 +120,12 @@ export default function () {
         }
     }
 
-    const onReceivedMessage = (payload) => {
-        console.log("=====================ON NOTIFICATION RECEIVED============================");
+
+    const onReceivedMessage = useCallback((payload) => {
         let event = JSON.parse(payload.body);
-        if (event.name = "NEW_MESSAGE") {
+        if (event.name == "NEW_MESSAGE") {
             const newMessage = event.payload
-            console.log("payload", payload);
-            if (newMessage.conversationId == activeConversation.id) {
+            if (newMessage.conversationId == activeConversationId.current) {
                 // update the chat box when user is opening the conversation
                 updateChatbox(newMessage)
             }
@@ -128,11 +133,34 @@ export default function () {
             // update the sidebar
             updateSidebar(newMessage);
 
+        } else if (event.name == "NEW_CONVERSATION") {
+            const conversation = event.payload;
+            console.log("wow i have a new conversation");
+            setConversationList(prev => {
+                return [conversation, ...prev];
+            })
+        } else if (event.name == "NEW_FRIEND") {
+            const friend = event.payload;
+            setFriendList(prev => {
+
+                return [friend, ...prev];
+            })
+        } else if (event.name == "NEW_FRIEND_REQUEST") {
+
+            const friendRequest = event.payload;
+            setFriendRequestList(prev => {
+                return [friendRequest, ...prev];
+            })
+        } else if (event.name == "FRIEND_REQUEST_ACCEPTED") {
+
+            const notification = event.payload;
+            setNotificationList(prev => {
+                return [notification, ...prev];
+            })
         }
 
 
-        console.log(event);
-    }
+    }, [activeConversation])
 
     const updateChatbox = (newMessage) => {
         setChatbox(prev => {
@@ -144,7 +172,7 @@ export default function () {
         })
 
         // send a signal to the server to notify that the message is seen by the user
-        stompJsClient.current.send("/app/message-seen", {}, JSON.stringify({ id: user.id, conversationId: activeConversation.id }));
+        // stompJsClient.current.send("/app/message-seen", {}, JSON.stringify({ id: user.id, conversationId: activeConversation.id }));
     }
 
     const updateSidebar = (newMessage) => {
@@ -173,44 +201,65 @@ export default function () {
             }
         }
 
+
+        setConversationList([1, 2, 3, 4, 5, 6, 7, 8]) // this is for rendering the loading skeleton when sending request to the server
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/conversation-list`, header);
         const responseData = response.data.data;
 
         setConversationList(responseData.conversations);
         const currentConversation = responseData.conversations.find(c => c.id === responseData.currentConversationId)
         setActiveConversation(currentConversation);
-
+        if (!currentConversation) {
+            setChatbox({
+                renderGreetingChat: true
+            }); // this is when new user login, there is no active conversation, so we render the greeting conversation
+        }
     }
 
-    const fetchFriendList = async () => {
+    const fetchNotificationList = async () => {
         const header = {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         }
 
+
+        setNotificationList([1, 2, 3, 4, 5, 6, 7, 8]) // this is for rendering the loading skeleton when sending request to the server
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/notifications`, header);
+        const responseData = response.data.data;
+        setNotificationList(responseData);
+        // setNotificationList(currentConversatin);
+    }
+
+
+    const fetchFriendList = async () => {
+        if (!token) return null;
+        const header = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+
+        setFriendList([1, 2, 3, 4, 5, 6, 7, 8]) // this is for rendering the loading skeleton when sending request to the server
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/friends`, header);
         const responseData = response.data.data;
-
-
         setFriendList(responseData);
 
     }
 
 
     const fetchFriendRequestList = async () => {
+        if (!token) return null;
         const header = {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         }
 
-    
+        setFriendRequestList([1, 2, 3, 4, 5, 6, 7, 8]) // this is for rendering the loading skeleton when sending request to the server
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/friend-request`, header);
-        console.log("response", response.data.data);
         setFriendRequestList(response.data.data);
     }
-
 
     const fetchSidebar = async () => {
         const header = {
@@ -219,13 +268,10 @@ export default function () {
             }
         }
 
-        setLoadingSidebar(true);
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/sidebar`, header);
-        setLoadingSidebar(false);
         const sidebar = response.data.data;
 
 
-        console.log("sidebar", sidebar);
         setConversationList(sidebar.conversations);
         // set the active conversation to be the current conversation that user was recently in
         const currentConversation = sidebar.conversations.find(c => c.id === sidebar.currentConversationId)
@@ -233,30 +279,81 @@ export default function () {
     }
 
     const fetchConversationChatHistory = async () => {
-        console.log("Fetching conversation chat history")
 
         if (!activeConversation) {
             // if there is no active conversation, do nothing
-            console.log("No active conversation");
             // setLoadingChatbox(false);
             return;
         }
-        console.log("Active conversation", activeConversation);
         const header = {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         }
 
-        setLoadingChatbox(true);
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/chat/conversation-chat-history?conversationId=${activeConversation.id}`, header);
-        setLoadingChatbox(false);
 
         const chatbox = response.data.data;
-        console.log("chatbox", chatbox);
         setChatbox(chatbox);
     }
 
+
+
+    const handleClickConversation = (id) => {
+        const conversation = conversationList.find(conversation => conversation.id === id);
+        setActiveConversation(conversation);
+        // setActiveConversation();
+        //TODO: make this code cleaner (both backend and frontend)
+        // loop through the conversation list and set the unread to false
+        setConversationList(prev => {
+            return prev.map(conversation => {
+                if (conversation.id === id) {
+                    conversation.unread = false;
+                }
+                return conversation;
+            })
+        })
+    }
+
+
+    const handleAcceptFriendRequest = async (id) => {
+        if (!token) return null;
+        const header = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/user/accept-friend?requestId=${id}`, {}, header)
+        // if accept friend request successfully, fetch friend request list and friend list again
+        if (response.data.status == 200) {
+
+            // fetchFriendList();
+        }
+    }
+
+    const handleSeeAllNotifications = async () => {
+        if (!token) return null;
+        const header = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/user/see-all-notifications`,{}, header);
+        if (response.data.status === 200) {
+            setNotificationList(prev => {
+                return prev.map(notification => {
+                    return {
+                        ...notification,
+                        unread: false
+                    }
+                })
+            
+            })
+        }
+        
+    }
 
     return (
         <ModalContext.Provider value={{ setShowModal, setModalChildren }}>
@@ -268,11 +365,12 @@ export default function () {
                 <div className="Home">
                     <Sidebar
                         conversationList={conversationList}
-                        setConversationList={setConversationList}
+                        handleClickConversation={handleClickConversation}
+                        notificationList={notificationList}
                         friendList={friendList}
-                        setFriendList={setFriendList}
                         friendRequestList={friendRequestList}
-                        setFriendRequestList={setFriendRequestList}
+                        handleAcceptFriendRequest={handleAcceptFriendRequest}
+                        handleSeeAllNotifications={handleSeeAllNotifications}
                     // loading={loadingSidebar}
                     />
                     <Chat chatbox={chatbox} />

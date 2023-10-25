@@ -4,21 +4,21 @@ import { formatTime, truncateString } from "../../../utils/Utils";
 import ImaTalkLogo from '../../../assests/images/dsy-logo.png'
 export default function ({ conversationList, handleClickConversation, activeConversationInfo, loading }) {
 
-    if (!conversationList?.length) {
-        // render skeleton if conversation list is empty (when loading)
+    // if (!conversationList?.length) {
+    //     // render skeleton if conversation list is empty (when loading)
 
-        return (
-            <div className="ConversationList">
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) => {
-                    return (
-                        <Conversation
-                            key={index}
-                        />
-                    )
-                })}
-            </div>
-        )
-    }
+    //     return (
+    //         <div className="ConversationList">
+    //             {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) => {
+    //                 return (
+    //                     <Conversation
+    //                         key={index}
+    //                     />
+    //                 )
+    //             })}
+    //         </div>
+    //     )
+    // }
     return (
         <div className="ConversationList">
             {(conversationList && conversationList.length > 0) ?
@@ -69,7 +69,7 @@ function Conversation({ active, name, avatar, lastMessage, handleClickConversati
     // const active = index === 0;
     let onlineStatus = "";
     // const unread = lastMessage.unread;
-    const content = truncateString(lastMessage?.content, 6);
+    const content = truncateString(lastMessage?.content, 25);
     const formattedTime = formatTime(lastUpdate);
 
     let style = ""

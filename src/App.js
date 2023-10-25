@@ -51,7 +51,6 @@ function App() {
       setLoading(true); // show loading spinner
       const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/profile`, header);
       setLoading(false) // hide loading spinner
-      console.log("response", response);
       const userProfile = response.data.data;
       setUser(userProfile);
     } catch (e) {

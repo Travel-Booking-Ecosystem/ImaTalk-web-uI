@@ -74,7 +74,6 @@ export default function ({ chatbox }) {
 
         
         const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/chat/send-message`, body, header)
-        // console.log();
         const newMessage = response.data.data;
 
     }
@@ -114,12 +113,10 @@ export default function ({ chatbox }) {
     }
 
     const toggleShowEmojiPicker = () => {
-        console.log("toggleShowEmojiPicker");
         setShowEmojiPicker(val => !val);
     }
 
     const handleEmojiSelect = (emoji) => {
-        console.log("handleEmojiSelect", emoji);
         setUserInput(val => val + emoji.native);
         inputBoxRef.current.focus();
         // setShowEmojiPicker(false);
@@ -136,6 +133,9 @@ export default function ({ chatbox }) {
     //     return <GreetingChat />
     // }
 
+    if (chatbox.renderGreetingChat) {
+        return <GreetingChat />
+    }
 
     return (
         <ReplyMessageContext.Provider value={{ repliedMessageId, setRepliedMessageId, inputBoxRef }}>

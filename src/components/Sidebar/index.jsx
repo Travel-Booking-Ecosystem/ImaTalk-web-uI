@@ -4,7 +4,7 @@ import ConversationContext from "../../contexts/ConversationContext";
 import { useState, useEffect } from "react";
 import SearchBar from "./SearchBar";
 import ConversationList from "./ConversationList";
-import NotificationList from "./FriendTab";
+import NotificationList from "./NotificationList";
 import UserContext from "../../contexts/UserContext";
 import SockJS from 'sockjs-client';
 import { over } from 'stompjs';
@@ -15,25 +15,19 @@ import UserProfileModal from "../Modal/UserProfileModal";
 import FriendTab from "./FriendTab";
 import axios from "axios";
 
-export default function ({ conversationList, setConversationList, friendList, setFriendList, friendRequestList, setFriendRequestList }) {
-    console.log("Friend Request List 1", friendRequestList);
+export default function ({ conversationList, handleClickConversation, notificationList, handleSeeAllNotifications, friendList, friendRequestList, handleAcceptFriendRequest, }) {
 
-    console.log("log from sidebar");
     const {
         // directConversationList,
         // groupConversationList,
         activeConversation,
-        setActiveConversation,
     } = useContext(ConversationContext)
 
 
     const { setShowModal, setModalChildren } = useContext(ModalContext);
-
-
     const { user, token } = useContext(UserContext);
 
 
-    // const user =  {}
 
     const [activeTab, setActiveTab] = useState("conversation-tab");
 
@@ -47,90 +41,51 @@ export default function ({ conversationList, setConversationList, friendList, se
         setActiveTab(tabName);
     }
 
-    const handleClickConversation = (id) => {
-        const conversation = conversationList.find(conversation => conversation.id === id);
-        setActiveConversation(conversation);
-        // setActiveConversation();
-        //TODO: make this code cleaner (both backend and frontend)
-        // loop through the conversation list and set the unread to false
-        setConversationList(prev => {
-            return prev.map(conversation => {
-                if (conversation.id === id) {
-                    conversation.unread = false;
-                }
-                return conversation;
-            })
-        })
-    }
 
     const openUserProfileModal = () => {
-        console.log("openUserProfileModal")
-        console.log("user", user);
         setModalChildren(
             <UserProfileModal />);
         setShowModal(true);
     }
-    // console.log("activeConversationInfo", activeConversationInfo);
 
     // wait for user to be loaded
-    if (!user) return null;
 
 
-    const handleAcceptFriendRequest = async (id) => {
-        if (!token) return null;
-        const header = {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }
-
-        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/user/accept-friend?requestId=${id}`, {}, header)
-        console.log("response", response);
-
-        // if accept friend request successfully, fetch friend request list and friend list again
-        if (response.data.status == 200) {
-            fetchFriendRequestList();
-            fetchFriendList();
-        }
-    }
-
-    const fetchFriendList = async () => {
-        const header = {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }
-
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/friends`, header);
-        const responseData = response.data.data;
 
 
-        setFriendList(responseData);
 
+    const countUnreadConversation = (conversationList) => {
+        let count = 0;
+        conversationList?.forEach(conversation => {
+            if (conversation.unread) count++;
+        })
+        return count;
     }
 
 
-    const fetchFriendRequestList = async () => {
-        const header = {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }
-
-
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/friend-request`, header);
-        console.log("response", response.data.data);
-        setFriendRequestList(response.data.data);
+    const countUnreadNotification = (notificationList) => {
+        let count = 0;
+        notificationList?.forEach(notification => {
+            if (notification.unread) count++;
+        })
+        return count;
     }
+
+
+
     return (
-        <div className="Sidebar">
+        user ? <div className="Sidebar">
+
 
             <UserInfo {...user} handleClick={openUserProfileModal} />
             <SearchBar />
             <TabContainer
                 handleClickTab={handleClickTab}
                 checkIfActiveTab={checkIfActiveTab}
-                friendNotificationCount={friendRequestList.length}
+                friendNewCount={friendRequestList.length}
+                unreadConversationCount={countUnreadConversation(conversationList)}
+                unreadNotificationCount={countUnreadNotification(notificationList)}
+                handleSeeAllNotifications={handleSeeAllNotifications}
             />
 
             {
@@ -148,12 +103,19 @@ export default function ({ conversationList, setConversationList, friendList, se
                             handleAcceptFriendRequest={handleAcceptFriendRequest}
                         />
                         :
-                        null
+                        activeTab === "notification-tab" ?
+                            <NotificationList
+                                notificationList={notificationList}
+                            />
+                            :
+                            null
 
 
             }
 
         </div>
+
+            : <div className="sidebar"></div>
 
     )
 }
@@ -176,28 +138,28 @@ function UserInfo({ avatar, displayName, username, handleClick }) {
     )
 }
 
-function TabContainer({ handleClickTab, checkIfActiveTab, friendNotificationCount }) {
 
+function TabContainer({ handleClickTab, checkIfActiveTab, unreadConversationCount, friendNewCount, unreadNotificationCount, handleSeeAllNotifications }) {
+
+    const handleSeeNotification = () => {
+        handleClickTab("notification-tab");
+        handleSeeAllNotifications();
+    }
 
     return (
         <div className="TabContainer">
             <div className={`tab chat-tab ${checkIfActiveTab("conversation-tab")}`} onClick={() => handleClickTab("conversation-tab")}>
-                <i class="tab-icon fa-solid fa-comment"><p className="noti-red-dot">2</p></i>
+                <i class="tab-icon fa-solid fa-comment">{unreadConversationCount > 0 &&<p className="noti-red-dot">{unreadConversationCount}</p>}</i>
                 <p class='tab-name'>Conversations</p>
             </div>
 
             <div className={`tab group-tab ${checkIfActiveTab('friend-tab')}`} onClick={() => handleClickTab("friend-tab")}>
-                <i class="tab-icon fa-solid fa-user-group">
-                    {friendNotificationCount > 0 &&
-                        <p className="noti-red-dot">{friendNotificationCount}</p>
-                    }
-                </i>
-
+                <i class="tab-icon fa-solid fa-user-group">{friendNewCount > 0 && <p className="noti-red-dot">{friendNewCount}</p>}</i>
                 <p class='tab-name'>Friends</p>
             </div>
 
-            <div className={`tab notification-tab ${checkIfActiveTab('notification-tab')}`} onClick={() => handleClickTab("notification-tab")}>
-                <i class="tab-icon fa-solid fa-bell"><p className="noti-red-dot">10</p></i>
+            <div className={`tab notification-tab ${checkIfActiveTab('notification-tab')}`} onClick={handleSeeNotification}>
+                <i class="tab-icon fa-solid fa-bell">{unreadNotificationCount > 0 && <p className="noti-red-dot">{unreadNotificationCount}</p>}</i>
                 <p class='tab-name'>Notifications</p>
             </div>
         </div>

@@ -153,7 +153,7 @@
         text-align: center;
         display: flex;
         flex-direction: column;
-        gap: 20px;
+        gap: 10px;
 
         .logo {
             img {
@@ -165,14 +165,13 @@
         }
 
         .title {
-            font-size: 2rem;
-            padding: 20px;
-            width: 300px;
-            word-wrap: break-word;
-            background: #5302FF;
+            font-size: 1rem;
+            padding: 0px;
+            // width: 300px;
+            // word-wrap: break-word;
+            color: #5302FF;
             border-radius: 15px;
-            color: #FFE920;
-
+            // color: #FFE920;
             font-weight: bold;
             margin: 0;
 

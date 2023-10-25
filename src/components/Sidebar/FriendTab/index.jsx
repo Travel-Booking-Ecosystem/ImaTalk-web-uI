@@ -32,7 +32,6 @@ export default function ({ friendList, friendRequestList, handleAcceptFriendRequ
                     </div>
 
                     {showFriendRequest && friendRequestList.map((friendRequest, index) => {
-                        console.log("friendRequest", friendRequest);
                         return (
                             <FriendRequest
                                 key={index}
@@ -64,6 +63,11 @@ export default function ({ friendList, friendRequestList, handleAcceptFriendRequ
 function FriendRequest({ avatar, displayName, username, onClickAccept }) {
 
     const style = (!avatar && !displayName && !username) ? "skeleton-FriendRequest" : "";
+    const [sendingRequest, setSendingRequest] = useState(false);
+    const handleClickAccept = async () => {
+        setSendingRequest(true);
+        onClickAccept();
+    }
 
     return (
         <div className={`FriendRequest ${style}`}>
@@ -75,7 +79,9 @@ function FriendRequest({ avatar, displayName, username, onClickAccept }) {
                 <p className="displayName">{displayName}</p>
                 <p className="username">{username}</p>
 
-                <div className="accept-btn" onClick={onClickAccept}>Accept Request</div>
+                <div className="accept-btn" onClick={handleClickAccept}>{
+                    sendingRequest ? "Accepting ..." : "Accept Request"
+                }</div>
             </div>
         </div>
     )

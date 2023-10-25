@@ -93,6 +93,13 @@
     overflow-y: auto;
     padding: 0 0px;
     // background: red;
+
+
+    .no-result {
+        font-size: 0.8em;
+        color: #666;
+        font-weight: bold;
+    }
 }
 
 .People {
@@ -207,5 +214,57 @@
         font-size: 0.8rem;
         cursor: pointer;
         
+    }
+}
+
+
+.skeleton-People {
+    .avatar {
+
+        // animation: skeleton-loading 1s linear infinite alternate;
+        // background: red;D
+        img {
+            background: rgb(216, 216, 216);
+            border: none;
+            animation: skeleton-loading 1s linear infinite alternate;
+
+        }
+
+        .online-status {
+            background: rgb(216, 216, 216);
+        }
+
+
+    }
+
+    .info {
+        gap: 5px;
+        // background: red !important;
+
+        p {
+            background: rgb(216, 216, 216);
+            height: 20px;
+            border-radius: 5px;
+
+            animation: skeleton-loading 1s linear infinite alternate;
+        }
+        .displayName {
+            width: 125px;
+
+        }
+
+        .username {
+            width: 50px;
+        }
+
+
+    }
+
+    .add-friend-btn{
+        background: rgb(216, 216, 216);
+        color: white;
+        border-radius: 5px;
+        // cursor: none;
+        animation: skeleton-loading 1s linear infinite alternate;
     }
 }

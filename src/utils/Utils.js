@@ -7,9 +7,9 @@ export const truncateString = (str, wordCount) => {
     const truncatedWords = words.slice(0, wordCount).join(" ") + "...";
     
     // make sure the truncated words is not longer than 20 words
-    if (truncatedWords.length > 25) {
+    if (truncatedWords.length > wordCount) {
         // return first 20 characters
-        return str.substring(0, 25) + "...";
+        return str.substring(0, wordCount) + "...";
     }
 
     if (words.length <= wordCount) {

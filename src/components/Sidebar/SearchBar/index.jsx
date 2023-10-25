@@ -2,6 +2,7 @@ import "./style.scss";
 import React, { useEffect, useState, useContext, useRef } from "react";
 import UserContext from "../../../contexts/UserContext";
 import axios from "axios";
+import Loading from "../../Loading";
 export default function ({ }) {
 
     const [showSearchResult, setShowSearchResult] = useState(false);
@@ -35,22 +36,20 @@ export default function ({ }) {
         }
 
 
+        setPeopleList([1, 2, 3, 4, 5, 6]) // for loading effect
         // const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/search/?keyword=${searchKeyword}`, header)
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/search/people?keyword=${searchKeyword}`, header)
-        // console.log();
 
         if (response.data.status == 200) {
             const peopleList = response.data.data;
-            console.log("peopleList", peopleList);
             setPeopleList(peopleList)
 
         }
 
-        console.log("peopleList", peopleList);
     }
 
     const handleAddFriend = async (id) => {
-        if (!token) return null;
+        if (!token || !id) return null;
         const header = {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -62,9 +61,8 @@ export default function ({ }) {
         }
 
         const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/user/add-friend?otherUserId=${id}`, body, header)
-        // console.log();
         if (response.data.status == 200) {
-
+            
             setPeopleList(prev => {
                 const newList = prev.map(people => {
                     if (people.id == id) {
@@ -80,26 +78,6 @@ export default function ({ }) {
 
         }
     }
-
-
-    const peopleArray = [
-        {
-            avatar: "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&q=60&w=600&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Y2FyfGVufDB8fDB8fHww",
-            displayName: "Caryn A. Smith",
-            username: "@caryn"
-        },
-        {
-            avatar: "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&q=60&w=600&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Y2FyfGVufDB8fDB8fHww",
-            displayName: "Caryn O. Smith",
-            username: "@caryn"
-        },
-        {
-            avatar: "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&q=60&w=600&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Y2FyfGVufDB8fDB8fHww",
-            displayName: "Caryn S. Smith",
-            username: "@caryn"
-        }
-    ]
-
 
 
     useEffect(() => {
@@ -152,6 +130,12 @@ export default function ({ }) {
                             )
                         })
                     }
+                    {
+                        searchKeyword && peopleList.length == 0 &&
+                        <div className="no-result">
+                            <p>No result found</p>
+                        </div>
+                    }
                 </div>
             </div>}
 
@@ -162,10 +146,20 @@ export default function ({ }) {
 
 
 function People({ avatar, displayName, username, onClickAddFriend, friend, requestSent }) {
-    const style = (!avatar && !displayName && !username) ? "skeleton-UserInfo" : "";
+    const style = (!avatar && !displayName && !username) ? "skeleton-People" : "";
+
+    const [sendingRequest, setSendingRequest] = useState(false);
+
+    const handleClickAddFriend = async () => {
+        setSendingRequest(true);
+        await onClickAddFriend();
+        setSendingRequest(false);
+        //TODO: should i change the friend and request here?
+    }
+
 
     return (
-        <div className="People">
+        <div className={`People ${style}`}>
             <div className="avatar">
                 <img src={avatar} alt="" />
                 <div className="online-status online"></div>
@@ -175,7 +169,10 @@ function People({ avatar, displayName, username, onClickAddFriend, friend, reque
                 <p className="username">{username}</p>
             </div>
 
-            {!friend && !requestSent && <div className="add-friend-btn" onClick={onClickAddFriend}>Add Friend</div>}
+
+            {!friend && !requestSent && <div className="add-friend-btn" onClick={handleClickAddFriend}>
+                {sendingRequest ? 'Sending ...': 'Add Friend'}
+            </div>}
             {!friend && requestSent && <div className="request-sent-btn">Request Sent</div>}
         </div>
     )

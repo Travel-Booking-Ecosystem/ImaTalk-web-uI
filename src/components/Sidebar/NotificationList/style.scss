@@ -1,0 +1,146 @@
+.NotificationList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 0px;
+    overflow-y: auto;
+    flex: 1;
+
+
+}
+
+.Notification {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    border-radius: 7.5px;
+    padding: 10px 5px;
+    background: rgb(248, 248, 248);
+    // opacity: 0.5;
+
+    .image {
+        height: 45px;
+        width: 45px;
+        flex-shrink: 0;
+
+        img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgb(0, 0, 0);
+        }
+    }
+
+    .main-content {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+
+        .heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .time {
+                font-size: 0.8rem;
+                color: #666;
+                margin: 0;
+            }
+
+            .red-dot {
+                height: 7px;
+                width: 7px;
+                border-radius: 50%;
+                background: red;
+                margin-right: -30px;
+                // margin-top: -0px;
+                // margin-left: 10px;
+            }
+        }
+
+        .title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .content {
+            font-size: 0.8rem;
+            color: #666;
+            margin: 0;
+        }
+    }
+}
+
+
+.skeleton-Notification {
+
+    .image {
+        img {
+            animation: skeleton-loading 1s linear infinite alternate;
+            background: rgb(216, 216, 216);
+            border: 3px solid rgb(216, 216, 216);
+        }
+    }
+
+    .main-content {
+        gap: 5px;
+
+        .heading {
+            background: rgb(216, 216, 216);
+            width: 100px;
+            height: 15px;
+            animation: skeleton-loading 1s linear infinite alternate;
+            border-radius: 5px;
+
+            .time {
+        
+
+            }
+
+            .red-dot {
+                background: rgb(216, 216, 216);;
+            }
+        }
+
+
+        .title,
+        .content {
+            animation: skeleton-loading 1s linear infinite alternate;
+            background: rgb(216, 216, 216);
+            height: 10px;
+            border-radius: 5px;
+        }
+
+        .title {
+            width: 150px;
+
+        }
+
+        .content {
+            width: 50px;
+
+        }
+    }
+
+}
+
+.unread {
+    background: rgb(222, 222, 222);
+    opacity: 1;
+
+}
+
+
+
+@keyframes skeleton-loading {
+    0% {
+        background-color: hsl(200, 20%, 80%);
+    }
+
+    100% {
+        background-color: hsl(0, 0%, 77%);
+    }
+}

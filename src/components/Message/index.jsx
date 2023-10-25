@@ -101,7 +101,6 @@ export default function ({ isMe, message, sender, previousMessage, nextMessage, 
 
 
     const handleReplyClick = () => {
-        console.log('handleReplyClick');
         setRepliedMessageId(message.id);
         inputBoxRef.current.focus();
     }
