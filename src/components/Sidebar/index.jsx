@@ -95,6 +95,7 @@ export default function ({ conversationList, handleClickConversation, notificati
                         conversationList={conversationList}
                         handleClickConversation={handleClickConversation}
                         activeConversationInfo={activeConversation}
+                        friendList={friendList}
                     />
                     : activeTab === "friend-tab" ?
                         <FriendTab

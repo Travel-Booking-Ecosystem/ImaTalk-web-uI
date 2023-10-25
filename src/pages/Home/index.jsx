@@ -183,7 +183,7 @@ export default function () {
             conversationToUpdate.unread = true; // for new message, set the unread to true
 
             // if the user is openning the conversation, all new messages of that conversation will be set to be read
-            if (conversationToUpdate.id === activeConversation.id) {
+            if (conversationToUpdate.id === activeConversationId.current) {
                 conversationToUpdate.unread = false;
             }
 
