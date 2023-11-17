@@ -11,7 +11,7 @@ export const truncateString = (str, wordCount) => {
         // return first 20 characters
         return str.substring(0, wordCount) + "...";
     }
-
+    
     if (words.length <= wordCount) {
         return str;
     }

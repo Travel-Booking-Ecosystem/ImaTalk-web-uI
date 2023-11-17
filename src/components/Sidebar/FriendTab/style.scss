@@ -88,11 +88,11 @@
         flex-shrink: 0;
 
         img {
-            height: 60px;
-            width: 60px;
+            height: 50px;
+            width: 50px;
             object-fit: cover;
             border-radius: 50%;
-            border: 3px solid rgb(0, 0, 0);
+            border: 1px solid rgb(0, 0, 0, 0.1);
         }
 
         .online-status {
@@ -127,7 +127,7 @@
 
         // background: pink;
         .displayName {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
             margin: 0;
             // background: red;
@@ -157,10 +157,10 @@
         background: #0095f6;
         color: white;
         border: none;
-        padding: 5px 10px;
+        padding: 3px 10px;
         border-radius: 5px;
         font-weight: bold;
-        font-size: 0.8rem;
+        font-size: 0.65rem;
         cursor: pointer;
 
         &:hover {
@@ -182,5 +182,79 @@
         font-size: 0.8rem;
         cursor: pointer;
 
+    }
+}
+
+
+.Conversation {
+    display: flex;
+    padding: 7px 10px;
+    border-radius: 10px;
+    gap: 10px;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover {
+        background: rgb(240, 240, 240);
+    }
+
+    .avatar {
+        position: relative;
+        flex-shrink: 0;
+
+        img {
+            height: 50px;
+            width: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 1px solid rgb(0, 0, 0, 0.1);
+        }
+
+        .online-status {
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            right: 5px;
+            bottom: 5px;
+            border: 1.5px solid white;
+        }
+
+        .online {
+            background: rgb(1, 199, 1);
+        }
+
+        .away {
+            background: orange;
+        }
+
+        .offline {
+            background: grey;
+        }
+    }
+
+    .conversation-info {
+        text-align: left;
+
+        .name {
+            font-size: 1rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .last-message-content {
+            margin-top: 3px;
+            font-size: 0.8rem;
+            color: #666;
+            margin: 0;
+        }
+
+        .time {
+            margin-top: 5px;
+            font-size: 0.8rem;
+            color: #666;
+
+            // font-z
+        }
     }
 }

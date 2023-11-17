@@ -39,9 +39,13 @@ export default function ({ conversationList, handleClickConversation, activeConv
                     )
                 })
                 :
-
+                <>
+                
                 <GreetingConversation
                 />
+                <p class='bold'>No Conversation</p>
+                </>
+
 
 
 

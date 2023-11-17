@@ -1,18 +1,18 @@
-
 .SearchBar {
     // background-color:red;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
-    background-color: #dbdbdb;
+    border-radius: 5px;
+    background-color: #dedede;
     // margin: 10px 0;
     padding: 5px 10px;
     position: relative;
+
     input {
         width: 100%;
-        height: 30px;
-        padding: 0 10px;
+        height: 25px;
+        padding: 0 5px;
         font-size: 1rem;
         border: none;
         font-size: 0.8em;
@@ -29,12 +29,18 @@
         // top: 50%;
         // transform: translateY(-50%);
         // font-size: 1.2rem;
-        color: #969696;
-        cursor: pointer;
+        display: none;
 
         &:hover {
             color: #000;
         }
+    }
+
+    .show-bg-red {
+        display: block;
+        cursor: pointer;
+
+        color: red;
     }
 
     .search-result {
@@ -53,7 +59,8 @@
             border-bottom: 3px solid rgba(0, 0, 0, 0.250);
             padding: 10px 0;
             margin: 10px 0;
-            .tab {
+            font-size: 0.8em;
+            .tab {  
                 margin: 0;
                 cursor: pointer;
                 font-weight: bold;
@@ -65,7 +72,7 @@
             }
         }
 
-        
+
         &::-webkit-scrollbar-track {
             -webkit-box-shadow: inset 0 0 2px rgba(186, 186, 186, 0.3);
             background-color: #ffffff;
@@ -121,11 +128,11 @@
         flex-shrink: 0;
 
         img {
-            height: 60px;
-            width: 60px;
+            height: 50px;
+            width: 50px;
             object-fit: cover;
             border-radius: 50%;
-            border: 3px solid rgb(0, 0, 0);
+            border: 1px solid rgba(0, 0, 0, 0.139);
         }
 
         .online-status {
@@ -157,9 +164,10 @@
         flex-direction: column;
         // background: powderblue;
         height: 60px;
+
         // background: pink;
         .displayName {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
             margin: 0;
             // background: red;
@@ -167,7 +175,7 @@
 
         .username {
             margin-top: 5px;
-            font-size: 0.8rem;
+            font-size: 0.6rem;
             color: #666;
             margin: 0;
         }
@@ -192,7 +200,7 @@
         padding: 5px 10px;
         border-radius: 5px;
         font-weight: bold;
-        font-size: 0.8rem;
+        font-size: 0.65rem;
         cursor: pointer;
 
         &:hover {
@@ -213,7 +221,7 @@
         font-weight: bold;
         font-size: 0.8rem;
         cursor: pointer;
-        
+
     }
 }
 
@@ -248,6 +256,7 @@
 
             animation: skeleton-loading 1s linear infinite alternate;
         }
+
         .displayName {
             width: 125px;
 
@@ -260,7 +269,7 @@
 
     }
 
-    .add-friend-btn{
+    .add-friend-btn {
         background: rgb(216, 216, 216);
         color: white;
         border-radius: 5px;

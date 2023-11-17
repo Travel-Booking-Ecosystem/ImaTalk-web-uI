@@ -98,9 +98,12 @@ export default function ({ }) {
     }, []); // Empty dependency array ensures the effect runs once after initial render
 
     const closeSearchBox = () => {
+        setSearchKeyword("");
         setShowSearchResult(false);
     };
 
+
+    const style = searchKeyword ? "show-bg-red" : "";
     return (
         <div className="SearchBar" ref={searchBoxRef}>
             <i class="fa-solid fa-magnifying-glass"></i>
@@ -108,7 +111,7 @@ export default function ({ }) {
                 placeholder="Search for friends, peple,..."
                 value={searchKeyword}
                 onChange={e => setSearchKeyword(e.target.value)} />
-            <i class="fa-solid fa-circle-xmark close-search-box" onClick={closeSearchBox}></i>
+            <i class={`fa-solid fa-circle-xmark close-search-box ${style}`} onClick={closeSearchBox}></i>
 
 
             {showSearchResult && <div className="search-result" >

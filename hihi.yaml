@@ -1,0 +1,38 @@
+version: "3.3"
+services:
+  mysql:
+    image: mysql 
+    container_name: mysql
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: my_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pmy_password"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  frontend:
+    image: hainguyen267/ima-talk-fe:0.4
+    ports:
+      - "3001:3000"
+    environment:
+      - REACT_APP_BACKEND_URL=http://localhost:8081
+  backend:
+    image: hainguyen267/ima-talk-be:0.41
+    ports:
+      - "8081:8080"
+    environment:
+      - mysql_database=ima_talk
+      - mysql_user=root
+      - mysql_password=my_password
+      - mysql_host=mysql
+      - FRONT_END_URL=http://localhost:3001
+    depends_on:
+      mysql:
+        condition: service_healthy
+volumes:
+  mysql_data:
+
+
+

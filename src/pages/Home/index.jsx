@@ -45,7 +45,6 @@ export default function () {
     const [showModal, setShowModal] = useState(false);
     const [modalChildren, setModalChildren] = useState();
 
-    console.log("active conversation: ", activeConversation);
     useEffect(() => {
         if (user) {
             fetchFriendRequestList();
@@ -76,24 +75,10 @@ export default function () {
         }
     }, [activeConversation])
 
-    // useEffect(() => {
-    //     // when the conversation list changes, set the current conversation to be read
-    //     if (!activeConversation) return
-    //     setConversationList(prev => {
-    //         return prev.map(conversation => {
-    //             if (conversation.id === activeConversation.id) {
-    //                 conversation.unread = false;
-    //             }
-    //             return conversation;
-    //         })
-    //     })
-    // }, [conversationList])
-
 
 
     const connectWebSocket = async () => {
-        // fix the bug he value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard '*' when the request's credentials mode is 'include'. The credentials mode of requests initiated by the XMLHttpRequest is controlled by the withCredentials attribut
-        let Sock = new SockJS(`${process.env.REACT_APP_BACKEND_URL}/ws`);
+        let Sock = new SockJS(`${process.env.REACT_APP_BACKEND_WEBSOCKET_URL}/ws`);
         stompJsClient.current = over(Sock);
         await stompJsClient.current.connect({}, onConnected, onError);
 
@@ -112,7 +97,6 @@ export default function () {
         // displayPopup("Something went wrong!", "Connect to server failed!, please contact the admin!", true)
     }
 
-    // connectWebSocket();
 
     const closeWebSocketConnection = () => {
         if (stompJsClient.current && stompJsClient.current.connected) {
@@ -124,7 +108,7 @@ export default function () {
     const onReceivedMessage = useCallback((payload) => {
         let event = JSON.parse(payload.body);
         if (event.name == "NEW_MESSAGE") {
-            const newMessage = event.payload
+            const newMessage = event.data
             if (newMessage.conversationId == activeConversationId.current) {
                 // update the chat box when user is opening the conversation
                 updateChatbox(newMessage)
@@ -134,26 +118,23 @@ export default function () {
             updateSidebar(newMessage);
 
         } else if (event.name == "NEW_CONVERSATION") {
-            const conversation = event.payload;
+            const conversation = event.data;
             console.log("wow i have a new conversation");
             setConversationList(prev => {
                 return [conversation, ...prev];
             })
         } else if (event.name == "NEW_FRIEND") {
-            const friend = event.payload;
+            const friend = event.data;
             setFriendList(prev => {
-
                 return [friend, ...prev];
             })
         } else if (event.name == "NEW_FRIEND_REQUEST") {
-
-            const friendRequest = event.payload;
+            const friendRequest = event.data;
             setFriendRequestList(prev => {
                 return [friendRequest, ...prev];
             })
-        } else if (event.name == "FRIEND_REQUEST_ACCEPTED") {
-
-            const notification = event.payload;
+        } else if (event.name == "NEW_NOTIFICATION") {
+            const notification = event.data;
             setNotificationList(prev => {
                 return [notification, ...prev];
             })
@@ -203,7 +184,7 @@ export default function () {
 
 
         setConversationList([1, 2, 3, 4, 5, 6, 7, 8]) // this is for rendering the loading skeleton when sending request to the server
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/conversation-list`, header);
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/chat/conversation-list`, header);
         const responseData = response.data.data;
 
         setConversationList(responseData.conversations);
@@ -225,7 +206,7 @@ export default function () {
 
 
         setNotificationList([1, 2, 3, 4, 5, 6, 7, 8]) // this is for rendering the loading skeleton when sending request to the server
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/notifications`, header);
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/notification/all`, header);
         const responseData = response.data.data;
         setNotificationList(responseData);
         // setNotificationList(currentConversatin);
@@ -328,7 +309,8 @@ export default function () {
         // if accept friend request successfully, fetch friend request list and friend list again
         if (response.data.status == 200) {
 
-            // fetchFriendList();
+            fetchFriendList();
+            fetchFriendRequestList();
         }
     }
 
@@ -340,17 +322,17 @@ export default function () {
             }
         }
 
-        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/user/see-all-notifications`,{}, header);
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/notification/see-all-notifications`,{}, header);
         if (response.data.status === 200) {
-            setNotificationList(prev => {
-                return prev.map(notification => {
-                    return {
-                        ...notification,
-                        unread: false
-                    }
-                })
+            // setNotificationList(prev => {
+            //     return prev.map(notification => {
+            //         return {
+            //             ...notification,
+            //             unread: false
+            //         }
+            //     })
             
-            })
+            // })
         }
         
     }

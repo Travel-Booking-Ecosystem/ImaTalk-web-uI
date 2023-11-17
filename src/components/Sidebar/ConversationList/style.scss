@@ -36,7 +36,7 @@
 
 .Conversation {
     display: flex;
-    padding: 10px;
+    padding: 7px 10px;
     border-radius: 10px;
     gap: 10px;
     align-items: center;
@@ -51,17 +51,17 @@
         flex-shrink: 0;
 
         img {
-            height: 60px;
-            width: 60px;
+            height: 50px;
+            width: 50px;
             object-fit: cover;
             border-radius: 50%;
-            border: 3px solid rgb(0, 0, 0);
+            border: 1px solid rgb(0, 0, 0, 0.1);
         }
 
         .online-status {
             position: absolute;
-            width: 10px;
-            height: 10px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             right: 5px;
             bottom: 5px;
@@ -85,7 +85,7 @@
         text-align: left;
 
         .name {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
             margin: 0;
         }
@@ -167,19 +167,19 @@
             background: rgb(240, 240, 240);
             width: 100px;
             margin: 2px 0;
-            border-radius: 5px;
+            border-radius: 2px;
             animation: skeleton-loading 1s linear infinite alternate;
 
         }
 
         .name {
-            width: 100px;
-            height: 20px;
+            width: 75px;
+            height: 15px;
         }
 
         .last-message-content {
-            width: 150px;
-            height: 15px;
+            width: 100px;
+            height: 10px;
 
         }
 
@@ -260,7 +260,7 @@
                         width: 50px;
                         object-fit: cover;
                         border-radius: 50%;
-                        border: 3px solid rgb(0, 0, 0);
+                        // border:  3px solid rgb(0, 0, 0);
                     }
                 }
             }

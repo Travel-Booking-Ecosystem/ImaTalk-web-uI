@@ -1,14 +1,13 @@
 .Sidebar {
-    width: 300px;
+    width: 225px;
     // height: 100%;
-    padding: 0px 10px;
-    border-right: 1px solid rgba(0, 0, 0, 0.197);
+    padding: 0px 5px;
+    border-right: 1px solid rgba(0, 0, 0, 0.101);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 7.5px;
     height: 100vh;
-
-
+    background: white;
     .ConversationList,
     .NotificationList {
         flex: 1;
@@ -42,12 +41,11 @@
     gap: 10px;
     align-items: center;
     cursor: pointer;
-    border-bottom: 3px solid rgba(0, 0, 0, 0.297);
 
 
     .user-avatar {
-        height: 75px;
-        width: 75px;
+        height: 35px;
+        width: 35px;
         position: relative;
         flex-shrink: 0;
 
@@ -56,13 +54,13 @@
             width: 100%;
             object-fit: cover;
             border-radius: 50%;
-            border: 2px solid rgb(0, 0, 0);
+            border: 1px solid rgb(0, 0, 0, 0.2);
         }
 
         .online-status {
             position: absolute;
-            width: 12px;
-            height: 12px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             right: 0px;
             bottom: 0px;
@@ -82,27 +80,35 @@
         }
     }
 
-    .user-name {
+    .info {
         display: flex;
-        flex-direction: column;
         justify-content: center;
-        gap: 0;
-        text-align: left;
-
-        p {
-            margin: 0;
-        }
-
-        .name {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        .id {
-            font-size: 0.8rem;
-            color: #666;
+        width: 100%;
+        align-items: center;
+        .user-name {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 0;
+            text-align: left;
+            flex: 1;
+            p {
+                margin: 0;
+            }
+    
+            .name {
+                font-size: 1rem;
+                font-weight: bold;
+            }
+    
+            .id {
+                font-size: 0.8rem;
+                color: #666;
+            }
         }
     }
+
+
 }
 
 .skeleton-UserInfo {
@@ -153,7 +159,8 @@
     // background: red;
     padding: 10px 0;
     justify-content: center;
-    gap: 40px;
+    gap: 25px;
+    border-top: 1px solid rgba(0, 0, 0, 0.297);
 
     .tab {
         display: flex;
@@ -170,13 +177,13 @@
         }
 
         .tab-name {
-            font-size: 0.8rem;
+            font-size: 0.70rem;
             font-weight: bold;
             margin: 0;
         }
 
         .tab-icon {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             position: relative;
 
             .noti-red-dot {

@@ -113,14 +113,13 @@ export default function ({ isMe, message, sender, previousMessage, nextMessage, 
             </div>
             <div className="message-detail">
                 <ReplyTo repliedMessage={repliedMessage} />
-                <div className="message-text">{message.content}</div>
+                <MessageComponent message={{ content: message.content }} />
                 <div className="time-and-status">
                     <div className="time">{formattedTime}</div>
                     {<MessageStatus isMe={isMe} seenAvatar={seenAvatar} isSent={isSent} isSeen={isSeen} />}
                 </div>
 
             </div>
-
             {
                 !isMe && <div className="reply-btn">
                     <img src={ReplyIcon} alt="" onClick={handleReplyClick} />
@@ -128,4 +127,15 @@ export default function ({ isMe, message, sender, previousMessage, nextMessage, 
             }
         </div>
     )
+}
+
+function MessageComponent({ message }) {
+    const contentWithNewLines = message.content.split('\n').map((line, index) => (
+        <React.Fragment key={index}>
+            {line}
+            <br />
+        </React.Fragment>
+    ));
+
+    return <div className="message-text">{contentWithNewLines}</div>;
 }

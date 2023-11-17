@@ -14,6 +14,7 @@ import ModalContext from "../../contexts/ModalContext";
 import UserProfileModal from "../Modal/UserProfileModal";
 import FriendTab from "./FriendTab";
 import axios from "axios";
+import { truncateString } from "../../utils/Utils";
 
 export default function ({ conversationList, handleClickConversation, notificationList, handleSeeAllNotifications, friendList, friendRequestList, handleAcceptFriendRequest, }) {
 
@@ -50,7 +51,14 @@ export default function ({ conversationList, handleClickConversation, notificati
 
     // wait for user to be loaded
 
-
+    const conversationNewFrienRequest = (friendRequestList) => {
+        let count = 0;
+        friendRequestList?.forEach(friendRequest => {
+            // the field isAccepted is not null and isAccepted is false
+            if (friendRequest.accepted === false) count++;
+        })
+        return 0;
+    }
 
 
 
@@ -82,7 +90,7 @@ export default function ({ conversationList, handleClickConversation, notificati
             <TabContainer
                 handleClickTab={handleClickTab}
                 checkIfActiveTab={checkIfActiveTab}
-                friendNewCount={friendRequestList.length}
+                friendNewCount={conversationNewFrienRequest(friendRequestList)}
                 unreadConversationCount={countUnreadConversation(conversationList)}
                 unreadNotificationCount={countUnreadNotification(notificationList)}
                 handleSeeAllNotifications={handleSeeAllNotifications}
@@ -124,6 +132,7 @@ export default function ({ conversationList, handleClickConversation, notificati
 function UserInfo({ avatar, displayName, username, handleClick }) {
     const style = (!avatar && !displayName && !username) ? "skeleton-UserInfo" : "";
 
+    const formatDisplayName = truncateString(displayName, 20);
 
     return (
         <div className={`UserInfo ${style}`} onClick={handleClick}>
@@ -131,10 +140,14 @@ function UserInfo({ avatar, displayName, username, handleClick }) {
                 <img src={avatar} alt="" />
                 <div className="online-status online"></div>
             </div>
-            <div className="user-name">
-                <p className="name">{displayName}</p>
-                <p className="id">{username}</p>
+            <div className="info">
+                <div className="user-name">
+                    <p className="name">{formatDisplayName}</p>
+                    <p className="id">{username}</p>
+                </div>
+                <i class="fa-solid fa-gear"></i>
             </div>
+
         </div>
     )
 }
@@ -150,7 +163,7 @@ function TabContainer({ handleClickTab, checkIfActiveTab, unreadConversationCoun
     return (
         <div className="TabContainer">
             <div className={`tab chat-tab ${checkIfActiveTab("conversation-tab")}`} onClick={() => handleClickTab("conversation-tab")}>
-                <i class="tab-icon fa-solid fa-comment">{unreadConversationCount > 0 &&<p className="noti-red-dot">{unreadConversationCount}</p>}</i>
+                <i class="tab-icon fa-solid fa-comment">{unreadConversationCount > 0 && <p className="noti-red-dot">{unreadConversationCount}</p>}</i>
                 <p class='tab-name'>Conversations</p>
             </div>
 

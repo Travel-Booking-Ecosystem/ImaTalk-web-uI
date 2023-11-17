@@ -30,8 +30,8 @@ export default  () => {
             <div className="input-container">
                 <label htmlFor="firstName" className='label'>
                     <p className="label-name">Display name</p>
-                    <input type="text" value={displayNameInput} onChange={e => setDisplayNameInput(e.target.value)} />
-                    <p className="edit-btn">Edit</p>
+                    <input type="text" value={displayNameInput} onChange={e => setDisplayNameInput(e.target.value)} disabled />
+                    {/* <p className="edit-btn">Edit</p> */}
                 </label>
             </div>
 

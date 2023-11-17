@@ -1,11 +1,12 @@
 .Message {
     display: flex;
+    flex-direction: row;
     // align-items: center;
     gap: 10px;
     text-align: left;
     cursor: pointer;
     padding-top: 30px;
-
+    // background: red;
     .avatar {
         position: relative;
         height: 30px;
@@ -41,7 +42,10 @@
             border-radius: 10px;
             max-width: 500px;
             word-wrap: break-word;
+            background: rgb(235, 235, 235);
+            font-size: 0.9em;
         }
+
 
 
         .time-and-status {
@@ -95,7 +99,7 @@
     align-self: flex-start;
 
     .message-text {
-        background: #d2d2d2;
+        background: rgba(230, 230, 230, 0.733);
         color: rgb(0, 0, 0);
     }
 
@@ -111,7 +115,9 @@
     align-self: flex-end;
 
     .message-text {
-        background: #0095f6;
+        background: #0095f6 !important;
+        // background: #c100f6;
+
         color: white;
     }
 
