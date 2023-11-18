@@ -1,6 +1,6 @@
 import "./style.scss";
 import React from "react";
-import { formatTime, truncateString } from "../../../utils/Utils";
+import { formatTime, truncateString } from "../../utils/Utils";
 
 
 export default function ({ notificationList }) {
@@ -45,6 +45,7 @@ function Notification ({ image, createdAt, title, content, unread }) {
             <div className="main-content">
                 <div className="heading">
                     <p className="time">{formattedTime}</p>
+                    {/* <div className="red-dot"></div> */}
                     {unread && <div className="red-dot"></div>}
                 </div>
                 <p className="title">{formattedTitle}</p>

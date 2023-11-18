@@ -2,8 +2,8 @@ import "./style.scss";
 import React from "react";
 import ReplyIcon from "../../assests/images/reply.png"
 import ReplyMessageContext from "../../contexts/ReplyMessageContext";
-import MessageStatus from "../Message/MessageStatus";
-import ReplyTo from "../Message/ReplyTo";
+import MessageStatus from "./MessageStatus";
+import ReplyTo from "./ReplyTo";
 import { formatTime } from "../../utils/Utils";
 
 

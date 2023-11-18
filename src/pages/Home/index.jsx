@@ -88,6 +88,9 @@ export default function () {
         if (stompJsClient.current && stompJsClient.current.connected && user) {
 
             stompJsClient.current.subscribe(`/topic/user/${user.id}`, onReceivedMessage);
+
+
+            
             // send a message to that user to notify that the user is online
             // stompJsClient.current.send("/app/user/online", {}, JSON.stringify({ id: user.id }));
         }

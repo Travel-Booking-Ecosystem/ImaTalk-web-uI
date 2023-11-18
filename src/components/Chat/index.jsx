@@ -13,6 +13,7 @@ import LoadingContext from "../../contexts/LoadingContext";
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 import Logo from '../../assests/images/dsy-logo.png'
+import GreetingChat from "./GreetingChat";
 export default function ({ chatbox }) {
 
     // const { chatbox } = useContext(ConversationContext);
@@ -20,6 +21,7 @@ export default function ({ chatbox }) {
     const { user, token } = useContext(UserContext);
 
     const inputBoxRef = useRef(null);
+    const inputContainerRef = useRef(null);
     const textareaHeight = useState(45)
 
     const chatBodyRef = useRef(null);
@@ -33,7 +35,7 @@ export default function ({ chatbox }) {
             console.log("click outside");
             // console.log(inputBoxRef.current);
             // console.log("=", inputBoxRef.current?.contains(event.target));
-            if (inputBoxRef.current && !inputBoxRef.current.contains(event.target)) {
+            if (inputContainerRef.current && !inputContainerRef.current.contains(event.target)) {
                 setShowEmojiPicker(false);
             }
         }
@@ -107,10 +109,11 @@ export default function ({ chatbox }) {
             repliedMessageId: message.repliedMessageId
         }
 
+        // add new message to the list
 
         const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/chat/send-message`, body, header)
-        const newMessage = response.data.data;
 
+        // if respose is success, then modify the message to be "sent"
     }
 
 
@@ -153,6 +156,8 @@ export default function ({ chatbox }) {
 
     const handleEmojiSelect = (emoji) => {
         setUserInput(val => val + emoji.native);
+        console.log("user input: ", userInput + emoji.native);
+
         inputBoxRef.current.focus();
         // setShowEmojiPicker(false);
     }
@@ -200,30 +205,38 @@ export default function ({ chatbox }) {
                     <div className="chat-body" ref={chatBodyRef}>
 
                         <div className="message-container">
+
                             {
-                                chatbox.messageList.map((message, index) => {
-                                    const isMe = message.senderId === user.id;
-                                    const previousMessage = getPreviousMessage(index)
-                                    const nextMessage = getNextMessage(index)
-                                    const sender = getMessageSender(message.id)
-                                    const repliedMessage = getRepliedMessageIfAny(message.repliedMessageId)
+                                chatbox.messageList.length > 0 ?
+                                    chatbox.messageList.map((message, index) => {
+                                        const isMe = message.senderId === user.id;
+                                        const previousMessage = getPreviousMessage(index)
+                                        const nextMessage = getNextMessage(index)
+                                        const sender = getMessageSender(message.id)
+                                        const repliedMessage = getRepliedMessageIfAny(message.repliedMessageId)
 
-                                    return (
-                                        <Message
-                                            isMe={isMe}
-                                            repliedMessage={repliedMessage}
-                                            seenAvatar={null} // skip this for now
-                                            isSeen={false} // skip this for now
-                                            isSent={false} // skip this for
-                                            previousMessage={previousMessage}
-                                            sender={sender}
-                                            message={message}
-                                            nextMessage={nextMessage}
-                                        />
-                                    )
+                                        return (
+                                            <Message
+                                                isMe={isMe}
+                                                repliedMessage={repliedMessage}
+                                                seenAvatar={null} // skip this for now
+                                                isSeen={false} // skip this for now
+                                                isSent={false} // skip this for
+                                                previousMessage={previousMessage}
+                                                sender={sender}
+                                                message={message}
+                                                nextMessage={nextMessage}
+                                            />
+                                        )
 
 
-                                })
+                                    })
+
+                                    :
+                                    <div className="no-message">
+                                        {/* <img src={Logo} alt="" /> */}
+                                        <p className="bold">Start a conversation now</p>
+                                    </div>
                             }
 
 
@@ -238,7 +251,7 @@ export default function ({ chatbox }) {
                         }
 
 
-                        <div className="input-container">
+                        <div className="input-container" ref={inputContainerRef}>
                             <div className="input-box">
                                 <i class="fa-regular fa-face-smile" onClick={toggleShowEmojiPicker}></i>
                                 <textarea
@@ -266,6 +279,7 @@ export default function ({ chatbox }) {
                                         <Picker data={data}
                                             onEmojiSelect={handleEmojiSelect}
                                             theme={"light"}
+                                            emojiSize={20}
 
                                         // onClickOutside={() => {
                                         //     if (sho)
@@ -279,9 +293,9 @@ export default function ({ chatbox }) {
                             </div>
 
                             <div className="default-emoji">
-                                <i class="fa-solid fa-heart heart"></i>
+                                {/* <i class="fa-solid fa-heart heart"></i> */}
                                 {/* <i class="fa-solid fa-face-smile smile"></i> */}
-                                {/* <i class="fa-solid fa-thumbs-up like"></i> */}
+                                <i class="fa-solid fa-thumbs-up like"></i>
                             </div>
 
                         </div>
@@ -312,6 +326,52 @@ export default function ({ chatbox }) {
                         <div className="bold action block-contact-btn">Block Contact</div>
                     </div>
                 </div>
+                {/* <div className="right-sidebar">
+                    <div className="profile">
+                        <img className='avatar' src="https://images.unsplash.com/photo-1699694927074-cb6a828dd255?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxMDh8fHxlbnwwfHx8fHw%3D" alt='' />
+                        <div className="name">User Display Name</div>
+                        <div className="chat-type">Group</div>
+                    </div>
+
+                    <div className="member-list">
+                        <p className="bold">Member List</p>
+                        <div className="member">
+                            <img className="avatar" src="https://plus.unsplash.com/premium_photo-1699389000894-8e99c0e31bf3?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw3fHx8ZW58MHx8fHx8" alt="" />
+                            <div className="member_info">
+                                <div className="name">John Doe</div>
+                                <div className="role">Admin</div>
+                            </div>
+                        </div>
+                        <div className="member">
+                            <img className="avatar" src="https://plus.unsplash.com/premium_photo-1699389000894-8e99c0e31bf3?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw3fHx8ZW58MHx8fHx8" alt="" />
+                            <div className="member_info">
+                                <div className="name">John Doe</div>
+                                <div className="role">Admin</div>
+                            </div>
+                        </div>
+                        <div className="member">
+                            <img className="avatar" src="https://plus.unsplash.com/premium_photo-1699389000894-8e99c0e31bf3?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw3fHx8ZW58MHx8fHx8" alt="" />
+                            <div className="member_info">
+                                <div className="name">John Doe</div>
+                                <div className="role">Admin</div>
+                            </div>
+                        </div>
+                        <div className="member">
+                            <img className="avatar" src="https://plus.unsplash.com/premium_photo-1699389000894-8e99c0e31bf3?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw3fHx8ZW58MHx8fHx8" alt="" />
+                            <div className="member_info">
+                                <div className="name">John Doe</div>
+                                <div className="role">Admin</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="action-container">
+                        <div className="bold action">Change chat theme color <p className="color-circle"></p></div>
+                        <div className="bold action">Change chat background</div>
+                        <div className="bold action">Change default react emoji</div>
+                        <div className="bold action block-contact-btn">Leave Group</div>
+                    </div>
+                </div> */}
             </div>
 
 
@@ -321,40 +381,3 @@ export default function ({ chatbox }) {
 }
 
 //TODO: clean all the code when new user login, he has no conversation, no chatbox, no message, no member, no conversationName, no conversationAvatar
-function GreetingChat({ userAvatar, userDisplayName }) {
-    return (
-        <div className="GreetingChat">
-            <div className="heading">
-                <div className="avatar">
-                    <img src={userAvatar} alt="" />
-                </div>
-                <div className="content">
-                    <p className="title">Welcome back !</p>
-                    <p className="title bold">{userDisplayName}</p>
-                </div>
-            </div>
-            <div className="body">
-                <div className="card">
-                    <div className="card-image">
-                        <img src="https://img.freepik.com/free-vector/tablet-with-users-communicating-speech-bubbles-global-internet-communication-social-media-network-technology-chat-message-forum-concept-vector-isolated-illustration_335657-1987.jpg?size=626&ext=jpg" alt="" />
-                    </div>
-                    <div className="card-body">
-                        <p className="title">Let's begin a conversation</p>
-                        <p className="text">Choose a person to start chatting with.</p>
-                        <div className="text">Start with a message...</div>
-                    </div>
-                </div>
-                <div className="card">
-                    <div className="card-image">
-                        <img src="https://img.freepik.com/free-vector/conversation-concept-illustration_114360-1102.jpg?size=626&ext=jpg" alt="" />
-                    </div>
-                    <div className="card-body">
-                        <p className="title">Make a new friend</p>
-                        <p className="text">Searching people by name to begin a conversation. </p>
-                        <div className="text">Send them something interesting...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
-}

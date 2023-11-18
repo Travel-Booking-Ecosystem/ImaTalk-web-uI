@@ -1,8 +1,8 @@
 import "./style.scss";
 import React from "react";
 import { useContext } from "react";
-import ReplyMessageContext from "../../../contexts/ReplyMessageContext";
-import { truncateString } from "../../../utils/Utils";
+import ReplyMessageContext from "../../contexts/ReplyMessageContext";
+import { truncateString } from "../../utils/Utils";
 
 export default function ({ senderName, messageContent }) {
 

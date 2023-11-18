@@ -1,8 +1,8 @@
 import "./style.scss";
 import React, { useState, useContext } from "react";
-import { formatTime, truncateString } from "../../../utils/Utils";
+import { formatTime, truncateString } from "../../utils/Utils";
 
-import UserContext from "../../../contexts/UserContext";
+import UserContext from "../../contexts/UserContext";
 import axios from "axios";
 export default function ({ friendList, friendRequestList, handleAcceptFriendRequest }) {
 
@@ -25,7 +25,7 @@ export default function ({ friendList, friendRequestList, handleAcceptFriendRequ
 
 
                     <div className="show-request-btn" onClick={toggleShowFriendRequest}>
-                        <div className="btn-text">New friend requests</div>
+                        <div className="btn-text">New friend requests ({friendRequestList.length})</div>
                         {showFriendRequest ? <i class="fa-solid fa-caret-up"></i>
                             : <i class="fa-solid fa-caret-down"></i>
                         }

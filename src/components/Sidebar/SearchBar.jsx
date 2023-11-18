@@ -1,8 +1,8 @@
 import "./style.scss";
 import React, { useEffect, useState, useContext, useRef } from "react";
-import UserContext from "../../../contexts/UserContext";
+import UserContext from "../../contexts/UserContext";
 import axios from "axios";
-import Loading from "../../Loading";
+import Loading from "../Loading";
 export default function ({ }) {
 
     const [showSearchResult, setShowSearchResult] = useState(false);

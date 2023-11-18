@@ -1,8 +1,8 @@
 import UserContext from "../../../contexts/UserContext";
 import "./style.scss";
-import React, {useContext, useState} from "react";
+import React, { useContext, useState } from "react";
 
-export default  () => {
+export default () => {
     const { user, setUser, setToken } = useContext(UserContext)
     const [displayNameInput, setDisplayNameInput] = useState(user?.displayName);
     const [avatarUrl, setAvatarUrl] = useState(user?.avatar);
@@ -18,7 +18,10 @@ export default  () => {
             <div className="info">
                 <div className="avatar">
                     <img src={avatarUrl} alt="" />
-                    <div className="change-avatar-btn"><i class="fa-solid fa-pen-to-square"></i></div>
+                    <label className="change-avatar-btn" htmlFor="avatar-file">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        <input type="file" class='hidden' id='avatar-file'/>    
+                    </label>
                 </div>
                 <div className="text">
                     <div className="display-name">{displayNameInput}</div>
@@ -30,8 +33,23 @@ export default  () => {
             <div className="input-container">
                 <label htmlFor="firstName" className='label'>
                     <p className="label-name">Display name</p>
-                    <input type="text" value={displayNameInput} onChange={e => setDisplayNameInput(e.target.value)} disabled />
-                    {/* <p className="edit-btn">Edit</p> */}
+                    <input type="text" value={displayNameInput} onChange={e => setDisplayNameInput(e.target.value)} />
+                    <p className="edit-btn"><i class="fa-regular fa-pen-to-square"></i></p>
+                </label>
+                <label htmlFor="firstName" className='label'>
+                    <p className="label-name">Phone number:</p>
+                    <input type="text" />
+                    <p className="edit-btn"><i class="fa-regular fa-pen-to-square"></i></p>
+                </label>
+                <label htmlFor="firstName" className='label'>
+                    <p className="label-name">City:</p>
+                    <input type="text" />
+                    <p className="edit-btn"><i class="fa-regular fa-pen-to-square"></i></p>
+                </label>
+                <label htmlFor="firstName" className='label'>
+                    <p className="label-name">Country:</p>
+                    <input type="text" />
+                    <p className="edit-btn"><i class="fa-regular fa-pen-to-square"></i></p>
                 </label>
             </div>
 

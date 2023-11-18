@@ -1,9 +1,9 @@
 import "./style.scss";
 import React, { useContext, useState } from "react";
-import { formatTime, truncateString } from "../../../utils/Utils";
-import ImaTalkLogo from '../../../assests/images/dsy-logo.png'
-import ModalContainer from "../../Modal/ModalContainer";
-import UserContext from "../../../contexts/UserContext";
+import { formatTime, truncateString } from "../../utils/Utils";
+import ImaTalkLogo from '../../assests/images/dsy-logo.png'
+import ModalContainer from "../Modal/ModalContainer";
+import UserContext from "../../contexts/UserContext";
 
 import axios from "axios";
 

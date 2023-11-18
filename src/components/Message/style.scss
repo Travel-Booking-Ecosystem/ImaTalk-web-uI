@@ -169,3 +169,40 @@
 .margin-top-10 {
     margin-top: 15px;
 }
+
+.Status {
+    text-align: right;
+    img {
+        margin: 2px;
+        height: 15px;
+        width: 15px;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+}
+
+.ReplyTo{
+    margin-top: 5px;
+    background: #e7e6e6;
+    padding: 7px 10px;
+    border-radius: 5px;
+    border-left: 3px solid black;
+    max-width: 250px;
+    
+    p {
+        margin: 0;
+    }
+
+    .sender-name {
+        font-weight: 500;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        font-size: 0.9em;
+    }
+
+    .replied-message-content {
+        font-size: 0.8rem;
+        color: #666;
+    }
+
+}

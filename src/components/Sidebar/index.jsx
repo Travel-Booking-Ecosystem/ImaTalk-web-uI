@@ -12,7 +12,7 @@ import { messages } from "../../utils/data";
 import ModalContainer from "../Modal/ModalContainer";
 import ModalContext from "../../contexts/ModalContext";
 import UserProfileModal from "../Modal/UserProfileModal";
-import FriendTab from "./FriendTab";
+import FriendList from "./FriendList";
 import axios from "axios";
 import { truncateString } from "../../utils/Utils";
 
@@ -57,7 +57,7 @@ export default function ({ conversationList, handleClickConversation, notificati
             // the field isAccepted is not null and isAccepted is false
             if (friendRequest.accepted === false) count++;
         })
-        return 0;
+        return count;
     }
 
 
@@ -106,7 +106,7 @@ export default function ({ conversationList, handleClickConversation, notificati
                         friendList={friendList}
                     />
                     : activeTab === "friend-tab" ?
-                        <FriendTab
+                        <FriendList
                             friendList={friendList}
                             friendRequestList={friendRequestList}
                             handleAcceptFriendRequest={handleAcceptFriendRequest}
@@ -155,9 +155,13 @@ function UserInfo({ avatar, displayName, username, handleClick }) {
 
 function TabContainer({ handleClickTab, checkIfActiveTab, unreadConversationCount, friendNewCount, unreadNotificationCount, handleSeeAllNotifications }) {
 
+    // i need to use state here because i need to update the notification count when user click see all notification
+    const [newNotificationCount, setNewNotificationCount] = useState(unreadNotificationCount);
+
     const handleSeeNotification = () => {
         handleClickTab("notification-tab");
         handleSeeAllNotifications();
+        setNewNotificationCount(0);
     }
 
     return (
@@ -173,7 +177,7 @@ function TabContainer({ handleClickTab, checkIfActiveTab, unreadConversationCoun
             </div>
 
             <div className={`tab notification-tab ${checkIfActiveTab('notification-tab')}`} onClick={handleSeeNotification}>
-                <i class="tab-icon fa-solid fa-bell">{unreadNotificationCount > 0 && <p className="noti-red-dot">{unreadNotificationCount}</p>}</i>
+                <i class="tab-icon fa-solid fa-bell">{newNotificationCount > 0 && <p className="noti-red-dot">{newNotificationCount}</p>}</i>
                 <p class='tab-name'>Notifications</p>
             </div>
         </div>
