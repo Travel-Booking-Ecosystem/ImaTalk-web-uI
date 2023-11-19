@@ -24,10 +24,17 @@ export default function ({ conversationList, handleClickConversation, notificati
         activeConversation,
     } = useContext(ConversationContext)
 
+    
 
     const { setShowModal, setModalChildren } = useContext(ModalContext);
     const { user, token } = useContext(UserContext);
+    const [ newNotificationCount, setNewNotificationCount ] = useState(0);
 
+    useEffect(() => {
+        const notificationCount = countUnreadNotification(notificationList);
+        setNewNotificationCount(notificationCount);
+    }, [notificationList])
+        
 
 
     const [activeTab, setActiveTab] = useState("conversation-tab");
@@ -51,6 +58,13 @@ export default function ({ conversationList, handleClickConversation, notificati
 
     // wait for user to be loaded
 
+    const handleSeeNotification = () => {
+        handleClickTab("notification-tab");
+        handleSeeAllNotifications();
+        setNewNotificationCount(0);
+    }
+
+    
     const conversationNewFrienRequest = (friendRequestList) => {
         let count = 0;
         friendRequestList?.forEach(friendRequest => {
@@ -67,6 +81,7 @@ export default function ({ conversationList, handleClickConversation, notificati
         conversationList?.forEach(conversation => {
             if (conversation.unread) count++;
         })
+
         return count;
     }
 
@@ -76,6 +91,7 @@ export default function ({ conversationList, handleClickConversation, notificati
         notificationList?.forEach(notification => {
             if (notification.unread) count++;
         })
+        console.log("the value of count is ", count);
         return count;
     }
 
@@ -92,8 +108,9 @@ export default function ({ conversationList, handleClickConversation, notificati
                 checkIfActiveTab={checkIfActiveTab}
                 friendNewCount={conversationNewFrienRequest(friendRequestList)}
                 unreadConversationCount={countUnreadConversation(conversationList)}
-                unreadNotificationCount={countUnreadNotification(notificationList)}
-                handleSeeAllNotifications={handleSeeAllNotifications}
+                unreadNotificationCount={newNotificationCount}
+            
+                handleSeeAllNotifications={handleSeeNotification}
             />
 
             {
@@ -155,14 +172,8 @@ function UserInfo({ avatar, displayName, username, handleClick }) {
 
 function TabContainer({ handleClickTab, checkIfActiveTab, unreadConversationCount, friendNewCount, unreadNotificationCount, handleSeeAllNotifications }) {
 
-    // i need to use state here because i need to update the notification count when user click see all notification
-    const [newNotificationCount, setNewNotificationCount] = useState(unreadNotificationCount);
 
-    const handleSeeNotification = () => {
-        handleClickTab("notification-tab");
-        handleSeeAllNotifications();
-        setNewNotificationCount(0);
-    }
+  
 
     return (
         <div className="TabContainer">
@@ -176,8 +187,8 @@ function TabContainer({ handleClickTab, checkIfActiveTab, unreadConversationCoun
                 <p class='tab-name'>Friends</p>
             </div>
 
-            <div className={`tab notification-tab ${checkIfActiveTab('notification-tab')}`} onClick={handleSeeNotification}>
-                <i class="tab-icon fa-solid fa-bell">{newNotificationCount > 0 && <p className="noti-red-dot">{newNotificationCount}</p>}</i>
+            <div className={`tab notification-tab ${checkIfActiveTab('notification-tab')}`} onClick={handleSeeAllNotifications}>
+                <i class="tab-icon fa-solid fa-bell">{unreadNotificationCount > 0 && <p className="noti-red-dot">{unreadNotificationCount}</p>}</i>
                 <p class='tab-name'>Notifications</p>
             </div>
         </div>
